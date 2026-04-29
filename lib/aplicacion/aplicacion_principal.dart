@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:proyecto_final_progra3/presentacion/pantallas/pantalla_lista_pokemon.dart';
+import 'package:proyecto_final_progra3/presentacion/pantallas/pantalla_pila_pokemon.dart';
 
 class AplicacionPrincipal extends StatelessWidget {
   const AplicacionPrincipal({super.key});
@@ -15,7 +15,7 @@ class AplicacionPrincipal extends StatelessWidget {
           seedColor: const Color(0xFF7C3AED),
         ),
       ),
-      home: const PantallaListaPokemon(),
+      home: const PantallaPilaPokemon(),
     );
   }
 }
