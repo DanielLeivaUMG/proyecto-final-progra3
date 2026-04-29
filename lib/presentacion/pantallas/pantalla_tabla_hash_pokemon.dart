@@ -15,11 +15,27 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
   final TextEditingController _controladorBusqueda = TextEditingController();
 
   Pokemon? _pokemonEncontrado;
+  bool _seHaBuscado = false;
 
   @override
   void dispose() {
     _controladorBusqueda.dispose();
     super.dispose();
+  }
+
+  void _buscarPokemon(TablaHashPokemon tablaHashPokemon) {
+    final String nombreBuscado = _controladorBusqueda.text.trim();
+
+    setState(() {
+      _seHaBuscado = true;
+
+      if (nombreBuscado.isEmpty) {
+        _pokemonEncontrado = null;
+        _seHaBuscado = false;
+      } else {
+        _pokemonEncontrado = tablaHashPokemon.buscarPorNombre(nombreBuscado);
+      }
+    });
   }
 
   @override
@@ -58,7 +74,15 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
             tablaHashPokemon.insertar(pokemon);
           }
 
-          final List<Pokemon> elementos = tablaHashPokemon.obtenerTodos();
+          List<Pokemon> elementosMostrados = tablaHashPokemon.obtenerTodos();
+
+          if (_seHaBuscado) {
+            if (_pokemonEncontrado != null) {
+              elementosMostrados = <Pokemon>[_pokemonEncontrado!];
+            } else {
+              elementosMostrados = <Pokemon>[];
+            }
+          }
 
           return Padding(
             padding: const EdgeInsets.all(16),
@@ -68,28 +92,16 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
                   controller: _controladorBusqueda,
                   decoration: InputDecoration(
                     labelText: 'Buscar por nombre',
-                    hintText: 'Ejemplo: pikachu',
+                    hintText: 'Ejemplo: bulbasaur',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _pokemonEncontrado = tablaHashPokemon.buscarPorNombre(
-                            _controladorBusqueda.text.trim(),
-                          );
-                        });
-                      },
+                      onPressed: () => _buscarPokemon(tablaHashPokemon),
                       icon: const Icon(Icons.search),
                     ),
                   ),
-                  onSubmitted: (_) {
-                    setState(() {
-                      _pokemonEncontrado = tablaHashPokemon.buscarPorNombre(
-                        _controladorBusqueda.text.trim(),
-                      );
-                    });
-                  },
+                  onSubmitted: (_) => _buscarPokemon(tablaHashPokemon),
                 ),
                 const SizedBox(height: 16),
                 Container(
@@ -100,8 +112,10 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    _pokemonEncontrado == null
-                        ? 'Resultado: sin búsqueda o no encontrado'
+                    !_seHaBuscado
+                        ? 'Resultado: sin búsqueda'
+                        : _pokemonEncontrado == null
+                        ? 'Resultado: no encontrado'
                         : 'Resultado: ${_pokemonEncontrado!.nombre}',
                     style: const TextStyle(
                       fontSize: 16,
@@ -122,10 +136,14 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
                 ),
                 const SizedBox(height: 12),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: elementos.length,
+                  child: elementosMostrados.isEmpty
+                      ? const Center(
+                    child: Text('No hay resultados para mostrar'),
+                  )
+                      : ListView.builder(
+                    itemCount: elementosMostrados.length,
                     itemBuilder: (context, index) {
-                      final Pokemon pokemon = elementos[index];
+                      final Pokemon pokemon = elementosMostrados[index];
 
                       return ListTile(
                         leading: CircleAvatar(
