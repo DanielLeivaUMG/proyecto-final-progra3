@@ -1,4 +1,4 @@
-import 'package:proyecto_final_progra3/datos/modelos/modelo_pokemon.dart';
+import 'package:proyecto_final_progra3/dominio/entidades/pokemon.dart';
 
 class PilaPokemon {
   final List<Pokemon> _elementos = <Pokemon>[];
