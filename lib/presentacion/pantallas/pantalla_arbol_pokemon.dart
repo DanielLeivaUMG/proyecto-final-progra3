@@ -24,6 +24,7 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
   bool _seHaBuscado = false;
   bool _cargandoArbol = false;
   String _tituloArbol = 'Sin arbol evolutivo cargado';
+  String? _ultimoNombreBuscado;
   List<Pokemon> _recorridoPreorden = <Pokemon>[];
   List<List<Pokemon>> _recorridoNiveles = <List<Pokemon>>[];
 
@@ -60,6 +61,7 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
         _tituloArbol = 'Arbol evolutivo cargado desde: $pokemonBase';
         _pokemonEncontrado = null;
         _seHaBuscado = false;
+        _ultimoNombreBuscado = null;
       });
 
       _mostrarMensaje('Arbol evolutivo cargado correctamente.', false);
@@ -90,6 +92,7 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
     setState(() {
       _seHaBuscado = true;
       _pokemonEncontrado = encontrado;
+      _ultimoNombreBuscado = nombreBuscado;
     });
 
     if (encontrado == null) {
@@ -223,6 +226,86 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
     );
   }
 
+  Widget _construirTituloSeccion(String texto, IconData icono) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.teal.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          Icon(icono, color: Colors.teal.shade700),
+          const SizedBox(width: 8),
+          Text(
+            texto,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _construirSeccionAnalisis() {
+    if (_arbolPokemon.estaVacio()) {
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: const Text('Carga un arbol para ver su analisis.'),
+        ),
+      );
+    }
+
+    final String nombreRaiz = _arbolPokemon.raiz?.pokemon.nombre ?? '-';
+    final int totalNodos = _arbolPokemon.contarNodos();
+    final int profundidadMaxima = _arbolPokemon.calcularProfundidadMaxima();
+    final int evolucionesDirectas =
+        _arbolPokemon.obtenerCantidadEvolucionesDirectasDeRaiz();
+    final String tipoArbol = _arbolPokemon.esArbolRamificado()
+        ? 'Ramificado'
+        : 'Lineal';
+    final List<Pokemon> evolucionesFinales = _arbolPokemon.obtenerEvolucionesFinales();
+    final List<Pokemon> rutaUltimaBusqueda = _ultimoNombreBuscado == null
+        ? <Pokemon>[]
+        : _arbolPokemon.obtenerRutaHastaPokemon(_ultimoNombreBuscado!);
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Analisis del arbol evolutivo',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Text('Pokemon raiz: $nombreRaiz'),
+            Text('Total de nodos: $totalNodos'),
+            Text('Profundidad maxima: $profundidadMaxima'),
+            Text('Cantidad de evoluciones directas: $evolucionesDirectas'),
+            Text('Tipo de arbol: $tipoArbol'),
+            const SizedBox(height: 8),
+            Text(
+              'Evoluciones finales: ${evolucionesFinales.isEmpty ? "Sin datos" : evolucionesFinales.map((Pokemon pokemon) => pokemon.nombre).join(", ")}',
+            ),
+            const SizedBox(height: 8),
+            if (_ultimoNombreBuscado == null)
+              const Text('Ruta del ultimo Pokemon buscado: sin busqueda.')
+            else if (rutaUltimaBusqueda.isEmpty)
+              Text(
+                'Ruta del ultimo Pokemon buscado ($_ultimoNombreBuscado): no existe en el arbol.',
+              )
+            else
+              Text(
+                'Ruta del ultimo Pokemon buscado ($_ultimoNombreBuscado): ${rutaUltimaBusqueda.map((Pokemon pokemon) => pokemon.nombre).join(" -> ")}',
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -235,6 +318,11 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            _construirTituloSeccion(
+              'Operaciones del arbol evolutivo',
+              Icons.construction_rounded,
+            ),
+            const SizedBox(height: 10),
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(12),
@@ -396,6 +484,8 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
               ),
             ),
             const SizedBox(height: 12),
+            _construirTituloSeccion('Vista del arbol', Icons.account_tree_rounded),
+            const SizedBox(height: 10),
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(12),
@@ -413,6 +503,8 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
               ),
             ),
             const SizedBox(height: 12),
+            _construirTituloSeccion('Recorridos del arbol', Icons.route_rounded),
+            const SizedBox(height: 10),
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(12),
@@ -464,6 +556,10 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
                 ),
               ),
             ),
+            const SizedBox(height: 12),
+            _construirTituloSeccion('Analisis', Icons.analytics_rounded),
+            const SizedBox(height: 10),
+            _construirSeccionAnalisis(),
           ],
         ),
       ),

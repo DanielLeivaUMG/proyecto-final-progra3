@@ -117,6 +117,47 @@ class ArbolPokemon {
     return nodos;
   }
 
+  int contarNodos() {
+    return _contarNodosRecursivo(_raiz);
+  }
+
+  int calcularProfundidadMaxima() {
+    return _calcularProfundidadRecursiva(_raiz);
+  }
+
+  List<Pokemon> obtenerEvolucionesFinales() {
+    final List<Pokemon> hojas = <Pokemon>[];
+    _agregarHojas(_raiz, hojas);
+    return hojas;
+  }
+
+  List<Pokemon> obtenerRutaHastaPokemon(String nombre) {
+    final String nombreNormalizado = nombre.trim().toLowerCase();
+    if (nombreNormalizado.isEmpty || _raiz == null) {
+      return <Pokemon>[];
+    }
+
+    final List<Pokemon> ruta = <Pokemon>[];
+    final bool encontrado = _construirRutaRecursiva(
+      _raiz!,
+      nombreNormalizado,
+      ruta,
+    );
+    return encontrado ? ruta : <Pokemon>[];
+  }
+
+  bool esArbolLineal() {
+    return _esLinealRecursivo(_raiz);
+  }
+
+  bool esArbolRamificado() {
+    return !estaVacio() && !esArbolLineal();
+  }
+
+  int obtenerCantidadEvolucionesDirectasDeRaiz() {
+    return _raiz?.hijos.length ?? 0;
+  }
+
   NodoArbolPokemon? _buscarNodo(NodoArbolPokemon? nodo, String nombre) {
     if (nodo == null) {
       return null;
@@ -179,5 +220,90 @@ class ArbolPokemon {
     for (final NodoArbolPokemon hijo in nodo.hijos) {
       _agregarNodosConNivel(hijo, nivel + 1, acumulador);
     }
+  }
+
+  int _contarNodosRecursivo(NodoArbolPokemon? nodo) {
+    if (nodo == null) {
+      return 0;
+    }
+
+    int total = 1;
+    for (final NodoArbolPokemon hijo in nodo.hijos) {
+      total += _contarNodosRecursivo(hijo);
+    }
+    return total;
+  }
+
+  int _calcularProfundidadRecursiva(NodoArbolPokemon? nodo) {
+    if (nodo == null) {
+      return 0;
+    }
+
+    if (nodo.hijos.isEmpty) {
+      return 1;
+    }
+
+    int maximaProfundidadHijos = 0;
+    for (final NodoArbolPokemon hijo in nodo.hijos) {
+      final int profundidadHijo = _calcularProfundidadRecursiva(hijo);
+      if (profundidadHijo > maximaProfundidadHijos) {
+        maximaProfundidadHijos = profundidadHijo;
+      }
+    }
+
+    return 1 + maximaProfundidadHijos;
+  }
+
+  void _agregarHojas(NodoArbolPokemon? nodo, List<Pokemon> acumulador) {
+    if (nodo == null) {
+      return;
+    }
+
+    if (nodo.hijos.isEmpty) {
+      acumulador.add(nodo.pokemon);
+      return;
+    }
+
+    for (final NodoArbolPokemon hijo in nodo.hijos) {
+      _agregarHojas(hijo, acumulador);
+    }
+  }
+
+  bool _construirRutaRecursiva(
+    NodoArbolPokemon nodo,
+    String nombreBuscado,
+    List<Pokemon> ruta,
+  ) {
+    ruta.add(nodo.pokemon);
+    if (nodo.pokemon.nombre.toLowerCase() == nombreBuscado) {
+      return true;
+    }
+
+    for (final NodoArbolPokemon hijo in nodo.hijos) {
+      if (_construirRutaRecursiva(hijo, nombreBuscado, ruta)) {
+        return true;
+      }
+    }
+
+    ruta.removeLast();
+    return false;
+  }
+
+  bool _esLinealRecursivo(NodoArbolPokemon? nodo) {
+    if (nodo == null) {
+      return true;
+    }
+
+    if (nodo.hijos.length > 1) {
+      return false;
+    }
+
+    for (final NodoArbolPokemon hijo in nodo.hijos) {
+      if (!_esLinealRecursivo(hijo)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }
