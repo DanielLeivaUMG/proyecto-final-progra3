@@ -2,11 +2,12 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:proyecto_final_progra3/datos/modelos/modelo_pokemon.dart';
+import 'package:proyecto_final_progra3/nucleo/configuracion/configuracion_api.dart';
 import 'package:proyecto_final_progra3/nucleo/constantes/api_constantes.dart';
 
 class ServicioPokeapi {
   String obtenerUrlPokemon() {
-    return '${ApiConstantes.urlBase}${ApiConstantes.endpointPokemon}';
+    return '${ConfiguracionApi.urlBase}${ApiConstantes.endpointPokemon}';
   }
 
   Future<List<Pokemon>> obtenerPokemones() async {
