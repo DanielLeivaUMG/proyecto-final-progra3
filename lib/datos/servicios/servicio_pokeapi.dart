@@ -1,14 +1,19 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:proyecto_final_progra3/dominio/entidades/pokemon.dart';
 import 'package:proyecto_final_progra3/datos/modelos/modelo_pokemon.dart';
+import 'package:proyecto_final_progra3/dominio/entidades/pokemon.dart';
+import 'package:proyecto_final_progra3/dominio/estructuras/arbol_pokemon.dart';
 import 'package:proyecto_final_progra3/nucleo/configuracion/configuracion_api.dart';
 import 'package:proyecto_final_progra3/nucleo/constantes/api_constantes.dart';
 
 class ServicioPokeapi {
   String obtenerUrlPokemon() {
     return '${ConfiguracionApi.urlBase}${ApiConstantes.endpointPokemon}';
+  }
+
+  String obtenerUrlPokemonSpecies() {
+    return '${ConfiguracionApi.urlBase}${ApiConstantes.endpointPokemonSpecies}';
   }
 
   Future<List<Pokemon>> obtenerPokemones() async {
@@ -28,5 +33,68 @@ class ServicioPokeapi {
     } else {
       throw Exception('Error al obtener los pokemones desde la API');
     }
+  }
+
+  Future<NodoArbolPokemon> obtenerArbolEvolutivo(String nombreOId) async {
+    final String pokemonBuscado = nombreOId.trim().toLowerCase();
+    if (pokemonBuscado.isEmpty) {
+      throw Exception('Debes ingresar un Pokemon valido.');
+    }
+
+    final Uri urlEspecie = Uri.parse(
+      '${obtenerUrlPokemonSpecies()}/$pokemonBuscado',
+    );
+    final http.Response respuestaEspecie = await http.get(urlEspecie);
+
+    if (respuestaEspecie.statusCode != 200) {
+      throw Exception('No se pudo obtener la especie del Pokemon solicitado.');
+    }
+
+    final Map<String, dynamic> datosEspecie =
+        json.decode(respuestaEspecie.body) as Map<String, dynamic>;
+    final String? urlCadenaEvolutiva =
+        (datosEspecie['evolution_chain'] as Map<String, dynamic>?)?['url']
+            as String?;
+
+    if (urlCadenaEvolutiva == null || urlCadenaEvolutiva.isEmpty) {
+      throw Exception('La especie no contiene una cadena evolutiva valida.');
+    }
+
+    final http.Response respuestaCadena = await http.get(
+      Uri.parse(urlCadenaEvolutiva),
+    );
+    if (respuestaCadena.statusCode != 200) {
+      throw Exception('No se pudo obtener la cadena evolutiva.');
+    }
+
+    final Map<String, dynamic> datosCadena =
+        json.decode(respuestaCadena.body) as Map<String, dynamic>;
+    final Map<String, dynamic>? cadenaRaiz =
+        datosCadena['chain'] as Map<String, dynamic>?;
+
+    if (cadenaRaiz == null) {
+      throw Exception('La cadena evolutiva no contiene datos.');
+    }
+
+    return _construirNodoEvolutivo(cadenaRaiz);
+  }
+
+  NodoArbolPokemon _construirNodoEvolutivo(Map<String, dynamic> cadenaNodo) {
+    final Map<String, dynamic> especie =
+        cadenaNodo['species'] as Map<String, dynamic>? ?? <String, dynamic>{};
+    final String nombre = (especie['name'] as String? ?? '').toLowerCase();
+    final String url = especie['url'] as String? ?? '';
+
+    final List<dynamic> evoluciones =
+        cadenaNodo['evolves_to'] as List<dynamic>? ?? <dynamic>[];
+    final List<NodoArbolPokemon> hijos = evoluciones
+        .whereType<Map<String, dynamic>>()
+        .map(_construirNodoEvolutivo)
+        .toList();
+
+    return NodoArbolPokemon(
+      pokemon: Pokemon(nombre: nombre, url: url),
+      hijos: hijos,
+    );
   }
 }
