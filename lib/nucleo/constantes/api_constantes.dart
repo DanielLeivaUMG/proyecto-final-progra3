@@ -1,4 +1,5 @@
 class ApiConstantes {
-  static const String urlBase = 'https://pokeapi.co/api/v2';
+  ApiConstantes._();
+
   static const String endpointPokemon = '/pokemon';
 }
