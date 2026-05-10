@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:proyecto_final_progra3/datos/modelos/modelo_pokemon.dart';
 import 'package:proyecto_final_progra3/datos/servicios/servicio_pokeapi.dart';
+import 'package:proyecto_final_progra3/dominio/entidades/pokemon.dart';
 import 'package:proyecto_final_progra3/dominio/estructuras/tabla_hash_pokemon.dart';
 
 class PantallaTablaHashPokemon extends StatefulWidget {
   const PantallaTablaHashPokemon({super.key});
 
   @override
-  State<PantallaTablaHashPokemon> createState() => _PantallaTablaHashPokemonState();
+  State<PantallaTablaHashPokemon> createState() =>
+      _PantallaTablaHashPokemonState();
 }
 
 class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
@@ -49,23 +50,17 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
         future: _servicioPokeapi.obtenerPokemones(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
+            return Center(child: Text('Error: ${snapshot.error}'));
           }
 
           final List<Pokemon> pokemones = snapshot.data ?? <Pokemon>[];
 
           if (pokemones.isEmpty) {
-            return const Center(
-              child: Text('No se encontraron Pokémon'),
-            );
+            return const Center(child: Text('No se encontraron Pokémon'));
           }
 
           final TablaHashPokemon tablaHashPokemon = TablaHashPokemon();
@@ -138,22 +133,24 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
                 Expanded(
                   child: elementosMostrados.isEmpty
                       ? const Center(
-                    child: Text('No hay resultados para mostrar'),
-                  )
+                          child: Text('No hay resultados para mostrar'),
+                        )
                       : ListView.builder(
-                    itemCount: elementosMostrados.length,
-                    itemBuilder: (context, index) {
-                      final Pokemon pokemon = elementosMostrados[index];
+                          itemCount: elementosMostrados.length,
+                          itemBuilder: (context, index) {
+                            final Pokemon pokemon = elementosMostrados[index];
 
-                      return ListTile(
-                        leading: CircleAvatar(
-                          child: Text('${index + 1}'),
+                            return ListTile(
+                              leading: CircleAvatar(
+                                child: Text('${index + 1}'),
+                              ),
+                              title: Text(pokemon.nombre),
+                              subtitle: Text(
+                                'Clave: ${pokemon.nombre.toLowerCase()}',
+                              ),
+                            );
+                          },
                         ),
-                        title: Text(pokemon.nombre),
-                        subtitle: Text('Clave: ${pokemon.nombre.toLowerCase()}'),
-                      );
-                    },
-                  ),
                 ),
               ],
             ),

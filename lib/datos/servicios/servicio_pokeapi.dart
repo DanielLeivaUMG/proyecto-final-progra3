@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:proyecto_final_progra3/dominio/entidades/pokemon.dart';
 import 'package:proyecto_final_progra3/datos/modelos/modelo_pokemon.dart';
 import 'package:proyecto_final_progra3/nucleo/configuracion/configuracion_api.dart';
 import 'package:proyecto_final_progra3/nucleo/constantes/api_constantes.dart';
@@ -19,7 +20,10 @@ class ServicioPokeapi {
       final List<dynamic> resultados = datos['results'] ?? <dynamic>[];
 
       return resultados
-          .map((dynamic item) => Pokemon.fromJson(item as Map<String, dynamic>))
+          .map(
+            (dynamic item) =>
+                ModeloPokemon.fromJson(item as Map<String, dynamic>).aEntidad(),
+          )
           .toList();
     } else {
       throw Exception('Error al obtener los pokemones desde la API');
