@@ -7,11 +7,15 @@ class TarjetaNodoArbol extends StatelessWidget {
     required this.nodo,
     required this.nivel,
     required this.esRaiz,
+    this.esRutaResaltada = false,
+    this.esPokemonEncontrado = false,
   });
 
   final NodoArbolPokemon nodo;
   final int nivel;
   final bool esRaiz;
+  final bool esRutaResaltada;
+  final bool esPokemonEncontrado;
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +24,37 @@ class TarjetaNodoArbol extends StatelessWidget {
         ? Colors.orange.shade700
         : Colors.blue.shade700;
 
+    Color colorFondo = colorBase.withValues(alpha: 0.08);
+    Color colorBorde = colorBase.withValues(alpha: 0.22);
+    double grosorBorde = 1;
+    List<BoxShadow>? sombras;
+
+    if (esRutaResaltada) {
+      colorFondo = Colors.amber.withValues(alpha: 0.18);
+      colorBorde = Colors.amber.shade700.withValues(alpha: 0.55);
+      grosorBorde = 1.4;
+    }
+
+    if (esPokemonEncontrado) {
+      colorFondo = Colors.green.withValues(alpha: 0.16);
+      colorBorde = Colors.green.shade700;
+      grosorBorde = 2.2;
+      sombras = <BoxShadow>[
+        BoxShadow(
+          color: Colors.green.withValues(alpha: 0.22),
+          blurRadius: 10,
+          offset: const Offset(0, 3),
+        ),
+      ];
+    }
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: colorBase.withValues(alpha: 0.08),
+        color: colorFondo,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: colorBase.withValues(alpha: 0.22)),
+        border: Border.all(color: colorBorde, width: grosorBorde),
+        boxShadow: sombras,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,6 +115,13 @@ class TarjetaNodoArbol extends StatelessWidget {
             children: [
               if (esRaiz)
                 const _BadgeNodoArbol(texto: 'RAÍZ', color: Color(0xFF4A3AB7)),
+              if (esRutaResaltada && !esPokemonEncontrado)
+                const _BadgeNodoArbol(texto: 'RUTA', color: Color(0xFF996400)),
+              if (esPokemonEncontrado)
+                const _BadgeNodoArbol(
+                  texto: 'ENCONTRADO',
+                  color: Color(0xFF1A7F44),
+                ),
               if (nodo.esTemporal)
                 const _BadgeNodoArbol(texto: 'LOCAL', color: Color(0xFFB26A00)),
               if (esFinal)

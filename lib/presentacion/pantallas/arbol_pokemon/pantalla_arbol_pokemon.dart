@@ -210,6 +210,18 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
     final List<Pokemon> rutaUltimaBusqueda = _ultimoNombreBuscado == null
         ? <Pokemon>[]
         : _arbolPokemon.obtenerRutaHastaPokemon(_ultimoNombreBuscado!);
+    final bool hayRutaResaltable =
+        _seHaBuscado &&
+        _pokemonEncontrado != null &&
+        rutaUltimaBusqueda.isNotEmpty;
+    final Set<String> nombresRutaResaltada = hayRutaResaltable
+        ? rutaUltimaBusqueda
+              .map((Pokemon pokemon) => pokemon.nombre.toLowerCase())
+              .toSet()
+        : <String>{};
+    final String? nombrePokemonEncontrado = hayRutaResaltable
+        ? _pokemonEncontrado!.nombre.toLowerCase()
+        : null;
 
     return DefaultTabController(
       length: 4,
@@ -267,6 +279,8 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
             PestanaVistaArbol(
               estaVacio: estaVacio,
               nodosConNivel: nodosConNivel,
+              nombresRutaResaltada: nombresRutaResaltada,
+              nombrePokemonEncontrado: nombrePokemonEncontrado,
             ),
             PestanaRecorridosArbol(
               recorridoPreorden: _recorridoPreorden,
