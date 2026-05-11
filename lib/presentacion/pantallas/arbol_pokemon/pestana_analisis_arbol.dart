@@ -33,13 +33,13 @@ class PestanaAnalisisArbol extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SeccionArbol(texto: 'Analisis', icono: Icons.analytics_rounded),
+          const SeccionArbol(texto: 'Análisis', icono: Icons.analytics_rounded),
           const SizedBox(height: 10),
           if (estaVacio)
             const Card(
               child: Padding(
                 padding: EdgeInsets.all(12),
-                child: Text('Carga un arbol para ver su analisis.'),
+                child: Text('Carga un árbol para ver su análisis.'),
               ),
             )
           else
@@ -50,17 +50,17 @@ class PestanaAnalisisArbol extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Analisis del arbol evolutivo',
+                      'Análisis del árbol evolutivo',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 10),
-                    Text('Pokemon raiz: $nombreRaiz'),
+                    Text('Pokémon raíz: $nombreRaiz'),
                     Text('Total de nodos: $totalNodos'),
-                    Text('Profundidad maxima: $profundidadMaxima'),
+                    Text('Profundidad máxima: $profundidadMaxima'),
                     Text(
                       'Cantidad de evoluciones directas: $evolucionesDirectas',
                     ),
-                    Text('Tipo de arbol: $tipoArbol'),
+                    Text('Tipo de árbol: $tipoArbol'),
                     const SizedBox(height: 8),
                     Text(
                       'Evoluciones finales: ${evolucionesFinales.isEmpty ? "Sin datos" : evolucionesFinales.map((Pokemon pokemon) => pokemon.nombre).join(", ")}',
@@ -68,15 +68,15 @@ class PestanaAnalisisArbol extends StatelessWidget {
                     const SizedBox(height: 8),
                     if (ultimoNombreBuscado == null)
                       const Text(
-                        'Ruta del ultimo Pokemon buscado: sin busqueda.',
+                        'Ruta del último Pokémon buscado: sin búsqueda.',
                       )
                     else if (rutaUltimaBusqueda.isEmpty)
                       Text(
-                        'Ruta del ultimo Pokemon buscado ($ultimoNombreBuscado): no existe en el arbol.',
+                        'Ruta del último Pokémon buscado ($ultimoNombreBuscado): no existe en el árbol.',
                       )
                     else
                       Text(
-                        'Ruta del ultimo Pokemon buscado ($ultimoNombreBuscado): ${rutaUltimaBusqueda.map((Pokemon pokemon) => pokemon.nombre).join(" -> ")}',
+                        'Ruta del último Pokémon buscado ($ultimoNombreBuscado): ${rutaUltimaBusqueda.map((Pokemon pokemon) => pokemon.nombre).join(" -> ")}',
                       ),
                   ],
                 ),

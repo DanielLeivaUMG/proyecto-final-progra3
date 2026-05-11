@@ -20,7 +20,7 @@ class PestanaRecorridosArbol extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SeccionArbol(
-            texto: 'Recorridos del arbol',
+            texto: 'Recorridos del árbol',
             icono: Icons.route_rounded,
           ),
           const SizedBox(height: 10),
