@@ -260,6 +260,7 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
           ),
         ),
         body: TabBarView(
+          physics: const NeverScrollableScrollPhysics(),
           children: [
             PestanaOperacionesArbol(
               controladorCarga: _controladorCarga,
@@ -278,6 +279,7 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
             ),
             PestanaVistaArbol(
               estaVacio: estaVacio,
+              raiz: _arbolPokemon.raiz,
               nodosConNivel: nodosConNivel,
               nombresRutaResaltada: nombresRutaResaltada,
               nombrePokemonEncontrado: nombrePokemonEncontrado,
