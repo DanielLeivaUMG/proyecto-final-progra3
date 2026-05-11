@@ -130,7 +130,10 @@ class TarjetaNodoArbol extends StatelessWidget {
                   color: Color(0xFF1A7F44),
                 ),
               if (nodo.esTemporal)
-                const _BadgeNodoArbol(texto: 'LOCAL', color: Color(0xFFB26A00)),
+                const _BadgeNodoArbol(
+                  texto: 'SIMULADO',
+                  color: Color(0xFFB26A00),
+                ),
               if (esFinal)
                 const _BadgeNodoArbol(texto: 'FINAL', color: Color(0xFF157A3F)),
             ],

@@ -4,7 +4,6 @@ import 'package:proyecto_final_progra3/dominio/entidades/pokemon.dart';
 import 'package:proyecto_final_progra3/dominio/estructuras/arbol_pokemon.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/arbol_pokemon/pestana_analisis_arbol.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/arbol_pokemon/pestana_operaciones_arbol.dart';
-import 'package:proyecto_final_progra3/presentacion/pantallas/arbol_pokemon/pestana_recorridos_arbol.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/arbol_pokemon/pestana_vista_arbol.dart';
 
 class PantallaArbolPokemon extends StatefulWidget {
@@ -29,8 +28,6 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
   bool _cargandoArbol = false;
   String _tituloArbol = 'Sin árbol evolutivo cargado';
   String? _ultimoNombreBuscado;
-  List<Pokemon> _recorridoPreorden = <Pokemon>[];
-  List<List<Pokemon>> _recorridoNiveles = <List<Pokemon>>[];
 
   @override
   void dispose() {
@@ -134,7 +131,7 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
 
     _actualizarRecorridos();
     _controladorNuevo.clear();
-    _mostrarMensaje('Evolución local insertada correctamente.', false);
+    _mostrarMensaje('Evolución simulada insertada correctamente.', false);
   }
 
   void _eliminarNodoLocal() {
@@ -155,7 +152,7 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
     final bool exito = _arbolPokemon.eliminarNodoLocal(nombreEliminar);
     if (!exito) {
       _mostrarMensaje(
-        'No se pudo eliminar. Solo se eliminan nodos locales temporales.',
+        'No se pudo eliminar. Solo se eliminan evoluciones simuladas temporales.',
         true,
       );
       return;
@@ -168,14 +165,11 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
         _seHaBuscado = false;
       });
     }
-    _mostrarMensaje('Nodo local eliminado correctamente.', false);
+    _mostrarMensaje('Evolución simulada eliminada correctamente.', false);
   }
 
   void _actualizarRecorridos() {
-    setState(() {
-      _recorridoPreorden = _arbolPokemon.obtenerRecorridoPreorden();
-      _recorridoNiveles = _arbolPokemon.obtenerRecorridoPorNiveles();
-    });
+    setState(() {});
   }
 
   void _mostrarMensaje(String mensaje, bool esError) {
@@ -207,6 +201,16 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
         : 'Lineal';
     final List<Pokemon> evolucionesFinales = _arbolPokemon
         .obtenerEvolucionesFinales();
+    final int cantidadEvolucionesLocales = nodosConNivel
+        .where(
+          (MapEntry<NodoArbolPokemon, int> entrada) => entrada.key.esTemporal,
+        )
+        .length;
+    final bool tieneBifurcacionesIntermedias = nodosConNivel.any((
+      MapEntry<NodoArbolPokemon, int> entrada,
+    ) {
+      return entrada.value > 0 && entrada.key.hijos.length > 1;
+    });
     final List<Pokemon> rutaUltimaBusqueda = _ultimoNombreBuscado == null
         ? <Pokemon>[]
         : _arbolPokemon.obtenerRutaHastaPokemon(_ultimoNombreBuscado!);
@@ -224,7 +228,7 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
         : null;
 
     return DefaultTabController(
-      length: 4,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Árbol Evolutivo Pokémon'),
@@ -254,7 +258,6 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
                 icon: Icon(Icons.account_tree_rounded),
                 text: 'Vista del árbol',
               ),
-              Tab(icon: Icon(Icons.route_rounded), text: 'Recorridos'),
               Tab(icon: Icon(Icons.analytics_rounded), text: 'Análisis'),
             ],
           ),
@@ -264,16 +267,12 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
           children: [
             PestanaOperacionesArbol(
               controladorCarga: _controladorCarga,
-              controladorBusqueda: _controladorBusqueda,
               controladorPadre: _controladorPadre,
               controladorNuevo: _controladorNuevo,
               controladorEliminar: _controladorEliminar,
               cargandoArbol: _cargandoArbol,
               tituloArbol: _tituloArbol,
-              seHaBuscado: _seHaBuscado,
-              pokemonEncontrado: _pokemonEncontrado,
               onCargarArbol: _cargarArbolEvolutivo,
-              onBuscarPokemon: _buscarPokemon,
               onInsertarEvolucionLocal: _insertarEvolucionLocal,
               onEliminarNodoLocal: _eliminarNodoLocal,
             ),
@@ -283,10 +282,10 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
               nodosConNivel: nodosConNivel,
               nombresRutaResaltada: nombresRutaResaltada,
               nombrePokemonEncontrado: nombrePokemonEncontrado,
-            ),
-            PestanaRecorridosArbol(
-              recorridoPreorden: _recorridoPreorden,
-              recorridoNiveles: _recorridoNiveles,
+              controladorBusqueda: _controladorBusqueda,
+              seHaBuscado: _seHaBuscado,
+              pokemonEncontrado: _pokemonEncontrado,
+              onBuscarPokemon: _buscarPokemon,
             ),
             PestanaAnalisisArbol(
               estaVacio: estaVacio,
@@ -296,6 +295,12 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
               evolucionesDirectas: evolucionesDirectas,
               tipoArbol: tipoArbol,
               evolucionesFinales: evolucionesFinales,
+              cantidadEvolucionesLocales: cantidadEvolucionesLocales,
+              tieneBifurcacionesIntermedias: tieneBifurcacionesIntermedias,
+              controladorBusqueda: _controladorBusqueda,
+              seHaBuscado: _seHaBuscado,
+              pokemonEncontrado: _pokemonEncontrado,
+              onBuscarPokemon: _buscarPokemon,
               ultimoNombreBuscado: _ultimoNombreBuscado,
               rutaUltimaBusqueda: rutaUltimaBusqueda,
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proyecto_final_progra3/dominio/entidades/pokemon.dart';
 import 'package:proyecto_final_progra3/dominio/estructuras/arbol_pokemon.dart';
 import 'package:proyecto_final_progra3/nucleo/utilidades/imagen_pokemon_helper.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/arbol_pokemon/widgets/diagrama_arbol_pokemon.dart';
@@ -15,6 +16,10 @@ class PestanaVistaArbol extends StatefulWidget {
     required this.nodosConNivel,
     required this.nombresRutaResaltada,
     required this.nombrePokemonEncontrado,
+    required this.controladorBusqueda,
+    required this.seHaBuscado,
+    required this.pokemonEncontrado,
+    required this.onBuscarPokemon,
   });
 
   final bool estaVacio;
@@ -22,6 +27,10 @@ class PestanaVistaArbol extends StatefulWidget {
   final List<MapEntry<NodoArbolPokemon, int>> nodosConNivel;
   final Set<String> nombresRutaResaltada;
   final String? nombrePokemonEncontrado;
+  final TextEditingController controladorBusqueda;
+  final bool seHaBuscado;
+  final Pokemon? pokemonEncontrado;
+  final VoidCallback onBuscarPokemon;
 
   @override
   State<PestanaVistaArbol> createState() => _PestanaVistaArbolState();
@@ -82,6 +91,55 @@ class _PestanaVistaArbolState extends State<PestanaVistaArbol> {
                         setState(() {
                           _modoSeleccionado = seleccion.first;
                         }),
+                  ),
+                  const SizedBox(height: 12),
+                  Card(
+                    margin: EdgeInsets.zero,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Buscar en esta familia',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: widget.controladorBusqueda,
+                            decoration: InputDecoration(
+                              labelText: 'Nombre del Pokémon',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            onSubmitted: (_) => widget.onBuscarPokemon(),
+                          ),
+                          const SizedBox(height: 8),
+                          ElevatedButton.icon(
+                            onPressed: widget.onBuscarPokemon,
+                            icon: const Icon(Icons.search_rounded),
+                            label: const Text('Buscar'),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.green.withValues(alpha: 0.10),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              !widget.seHaBuscado
+                                  ? 'Resultado: sin búsqueda'
+                                  : widget.pokemonEncontrado == null
+                                  ? 'Resultado: no encontrado'
+                                  : 'Resultado: ${widget.pokemonEncontrado!.nombre}',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 8),
                   if (!widget.estaVacio)

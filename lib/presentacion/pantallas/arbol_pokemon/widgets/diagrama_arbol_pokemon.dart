@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:proyecto_final_progra3/dominio/estructuras/arbol_pokemon.dart';
 import 'package:proyecto_final_progra3/nucleo/utilidades/imagen_pokemon_helper.dart';
 import 'package:proyecto_final_progra3/presentacion/widgets/imagen_pokemon.dart';
@@ -313,7 +313,7 @@ class _TarjetaNodoDiagrama extends StatelessWidget {
                 ),
               if (nodo.esTemporal)
                 const _BadgeNodoDiagrama(
-                  texto: 'LOCAL',
+                  texto: 'SIMULADO',
                   color: Color(0xFFB26A00),
                 ),
               if (esFinal)
