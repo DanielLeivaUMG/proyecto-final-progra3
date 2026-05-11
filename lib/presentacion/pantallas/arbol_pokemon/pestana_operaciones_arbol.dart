@@ -1,36 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:proyecto_final_progra3/dominio/entidades/pokemon.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/arbol_pokemon/widgets/seccion_arbol.dart';
 
 class PestanaOperacionesArbol extends StatelessWidget {
   const PestanaOperacionesArbol({
     super.key,
     required this.controladorCarga,
-    required this.controladorBusqueda,
     required this.controladorPadre,
     required this.controladorNuevo,
     required this.controladorEliminar,
     required this.cargandoArbol,
     required this.tituloArbol,
-    required this.seHaBuscado,
-    required this.pokemonEncontrado,
     required this.onCargarArbol,
-    required this.onBuscarPokemon,
     required this.onInsertarEvolucionLocal,
     required this.onEliminarNodoLocal,
   });
 
   final TextEditingController controladorCarga;
-  final TextEditingController controladorBusqueda;
   final TextEditingController controladorPadre;
   final TextEditingController controladorNuevo;
   final TextEditingController controladorEliminar;
   final bool cargandoArbol;
   final String tituloArbol;
-  final bool seHaBuscado;
-  final Pokemon? pokemonEncontrado;
   final VoidCallback onCargarArbol;
-  final VoidCallback onBuscarPokemon;
   final VoidCallback onInsertarEvolucionLocal;
   final VoidCallback onEliminarNodoLocal;
 
@@ -147,55 +138,7 @@ class PestanaOperacionesArbol extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Buscar Pokémon en el árbol',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: controladorBusqueda,
-                    decoration: InputDecoration(
-                      labelText: 'Nombre a buscar',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    onSubmitted: (_) => onBuscarPokemon(),
-                  ),
-                  const SizedBox(height: 8),
-                  ElevatedButton.icon(
-                    onPressed: onBuscarPokemon,
-                    icon: const Icon(Icons.search_rounded),
-                    label: const Text('Buscar'),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.green.withValues(alpha: 0.10),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      !seHaBuscado
-                          ? 'Resultado: sin búsqueda'
-                          : pokemonEncontrado == null
-                          ? 'Resultado: no encontrado'
-                          : 'Resultado: ${pokemonEncontrado!.nombre}',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Insertar evolución local',
+                    'Agregar evolución simulada',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
@@ -222,7 +165,7 @@ class PestanaOperacionesArbol extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: onInsertarEvolucionLocal,
                     icon: const Icon(Icons.add_circle_outline_rounded),
-                    label: const Text('Insertar local'),
+                    label: const Text('Agregar simulada'),
                   ),
                 ],
               ),
@@ -236,14 +179,14 @@ class PestanaOperacionesArbol extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Eliminar nodo local',
+                    'Eliminar evolución simulada',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   TextField(
                     controller: controladorEliminar,
                     decoration: InputDecoration(
-                      labelText: 'Nombre del nodo local',
+                      labelText: 'Nombre de la evolución simulada',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -254,7 +197,7 @@ class PestanaOperacionesArbol extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: onEliminarNodoLocal,
                     icon: const Icon(Icons.delete_outline_rounded),
-                    label: const Text('Eliminar local'),
+                    label: const Text('Eliminar simulada'),
                   ),
                 ],
               ),
