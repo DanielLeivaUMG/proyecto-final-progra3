@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_final_progra3/dominio/estructuras/arbol_pokemon.dart';
+import 'package:proyecto_final_progra3/nucleo/utilidades/imagen_pokemon_helper.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/arbol_pokemon/widgets/seccion_arbol.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/arbol_pokemon/widgets/tarjeta_nodo_arbol.dart';
 
@@ -124,6 +125,11 @@ class PestanaVistaArbol extends StatelessWidget {
                                         children: nodosNivel.map((
                                           NodoArbolPokemon nodo,
                                         ) {
+                                          final ReferenciasImagenPokemon?
+                                          referenciasImagen =
+                                              ImagenPokemonHelper.obtenerReferenciasDesdeUrl(
+                                                nodo.pokemon.url,
+                                              );
                                           final String nombreNormalizado = nodo
                                               .pokemon
                                               .nombre
@@ -141,6 +147,11 @@ class PestanaVistaArbol extends StatelessWidget {
                                               nodo: nodo,
                                               nivel: nivel,
                                               esRaiz: nivel == 0,
+                                              imagenUrl: referenciasImagen
+                                                  ?.urlPrincipal,
+                                              imagenFallbackUrl:
+                                                  referenciasImagen
+                                                      ?.urlFallback,
                                               esRutaResaltada: esRutaResaltada,
                                               esPokemonEncontrado:
                                                   esNodoEncontrado,
