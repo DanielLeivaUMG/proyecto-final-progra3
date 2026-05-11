@@ -34,6 +34,18 @@ class PestanaOperacionesArbol extends StatelessWidget {
   final VoidCallback onInsertarEvolucionLocal;
   final VoidCallback onEliminarNodoLocal;
 
+  static const List<_EjemploRapidoArbol>
+  _ejemplosRapidos = <_EjemploRapidoArbol>[
+    _EjemploRapidoArbol(nombre: 'Eevee', descripcion: 'Muchas ramas finales'),
+    _EjemploRapidoArbol(nombre: 'Charmander', descripcion: 'Evolución lineal'),
+    _EjemploRapidoArbol(nombre: 'Oddish', descripcion: 'Bifurcación final'),
+    _EjemploRapidoArbol(
+      nombre: 'Tyrogue',
+      descripcion: 'Varias finales directas',
+    ),
+    _EjemploRapidoArbol(nombre: 'Wurmple', descripcion: 'Ramas paralelas'),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -73,6 +85,50 @@ class PestanaOperacionesArbol extends StatelessWidget {
                     onPressed: cargandoArbol ? null : onCargarArbol,
                     icon: const Icon(Icons.cloud_download_rounded),
                     label: Text(cargandoArbol ? 'Cargando...' : 'Cargar árbol'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Ejemplos rápidos',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Carga árboles evolutivos interesantes con un toque.',
+                    style: TextStyle(color: Colors.black54),
+                  ),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: _ejemplosRapidos.map((
+                      _EjemploRapidoArbol ejemplo,
+                    ) {
+                      return ActionChip(
+                        avatar: const Icon(
+                          Icons.auto_awesome_rounded,
+                          size: 18,
+                        ),
+                        label: Text(
+                          '${ejemplo.nombre} · ${ejemplo.descripcion}',
+                        ),
+                        onPressed: cargandoArbol
+                            ? null
+                            : () {
+                                controladorCarga.text = ejemplo.nombre;
+                                onCargarArbol();
+                              },
+                      );
+                    }).toList(),
                   ),
                 ],
               ),
@@ -208,4 +264,11 @@ class PestanaOperacionesArbol extends StatelessWidget {
       ),
     );
   }
+}
+
+class _EjemploRapidoArbol {
+  const _EjemploRapidoArbol({required this.nombre, required this.descripcion});
+
+  final String nombre;
+  final String descripcion;
 }
