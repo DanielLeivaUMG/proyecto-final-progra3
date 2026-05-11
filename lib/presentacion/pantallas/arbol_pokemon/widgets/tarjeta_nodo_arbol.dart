@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_final_progra3/dominio/estructuras/arbol_pokemon.dart';
+import 'package:proyecto_final_progra3/presentacion/widgets/imagen_pokemon.dart';
 
 class TarjetaNodoArbol extends StatelessWidget {
   const TarjetaNodoArbol({
@@ -7,6 +8,8 @@ class TarjetaNodoArbol extends StatelessWidget {
     required this.nodo,
     required this.nivel,
     required this.esRaiz,
+    this.imagenUrl,
+    this.imagenFallbackUrl,
     this.esRutaResaltada = false,
     this.esPokemonEncontrado = false,
   });
@@ -14,6 +17,8 @@ class TarjetaNodoArbol extends StatelessWidget {
   final NodoArbolPokemon nodo;
   final int nivel;
   final bool esRaiz;
+  final String? imagenUrl;
+  final String? imagenFallbackUrl;
   final bool esRutaResaltada;
   final bool esPokemonEncontrado;
 
@@ -62,15 +67,17 @@ class TarjetaNodoArbol extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: 16,
-                backgroundColor: colorBase.withValues(alpha: 0.16),
-                child: Icon(
-                  nodo.esTemporal
-                      ? Icons.edit_note_rounded
-                      : Icons.pets_rounded,
-                  size: 18,
-                  color: colorBase,
+              Container(
+                padding: const EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  color: colorBase.withValues(alpha: 0.16),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ImagenPokemon(
+                  imagenUrl: imagenUrl,
+                  imagenFallbackUrl: imagenFallbackUrl,
+                  tamano: 36,
+                  radioBorde: 9,
                 ),
               ),
               const SizedBox(width: 10),
