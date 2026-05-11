@@ -27,7 +27,7 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
   Pokemon? _pokemonEncontrado;
   bool _seHaBuscado = false;
   bool _cargandoArbol = false;
-  String _tituloArbol = 'Sin arbol evolutivo cargado';
+  String _tituloArbol = 'Sin árbol evolutivo cargado';
   String? _ultimoNombreBuscado;
   List<Pokemon> _recorridoPreorden = <Pokemon>[];
   List<List<Pokemon>> _recorridoNiveles = <List<Pokemon>>[];
@@ -45,7 +45,7 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
   Future<void> _cargarArbolEvolutivo() async {
     final String pokemonBase = _controladorCarga.text.trim().toLowerCase();
     if (pokemonBase.isEmpty) {
-      _mostrarMensaje('Debes ingresar un Pokemon para cargar su arbol.', true);
+      _mostrarMensaje('Debes ingresar un Pokémon para cargar su árbol.', true);
       return;
     }
 
@@ -61,15 +61,15 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
       _actualizarRecorridos();
 
       setState(() {
-        _tituloArbol = 'Arbol evolutivo cargado desde: $pokemonBase';
+        _tituloArbol = 'Árbol evolutivo cargado desde: $pokemonBase';
         _pokemonEncontrado = null;
         _seHaBuscado = false;
         _ultimoNombreBuscado = null;
       });
 
-      _mostrarMensaje('Arbol evolutivo cargado correctamente.', false);
+      _mostrarMensaje('Árbol evolutivo cargado correctamente.', false);
     } catch (error) {
-      _mostrarMensaje('Error al cargar el arbol: $error', true);
+      _mostrarMensaje('Error al cargar el árbol: $error', true);
     } finally {
       if (mounted) {
         setState(() {
@@ -82,7 +82,7 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
   void _buscarPokemon() {
     final String nombreBuscado = _controladorBusqueda.text.trim().toLowerCase();
     if (_arbolPokemon.estaVacio()) {
-      _mostrarMensaje('Primero debes cargar un arbol evolutivo.', true);
+      _mostrarMensaje('Primero debes cargar un árbol evolutivo.', true);
       return;
     }
 
@@ -99,9 +99,9 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
     });
 
     if (encontrado == null) {
-      _mostrarMensaje('Pokemon no encontrado en el arbol.', true);
+      _mostrarMensaje('Pokémon no encontrado en el árbol.', true);
     } else {
-      _mostrarMensaje('Pokemon encontrado: ${encontrado.nombre}', false);
+      _mostrarMensaje('Pokémon encontrado: ${encontrado.nombre}', false);
     }
   }
 
@@ -110,12 +110,12 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
     final String nombreNuevo = _controladorNuevo.text.trim().toLowerCase();
 
     if (_arbolPokemon.estaVacio()) {
-      _mostrarMensaje('Primero debes cargar un arbol evolutivo.', true);
+      _mostrarMensaje('Primero debes cargar un árbol evolutivo.', true);
       return;
     }
 
     if (nombrePadre.isEmpty || nombreNuevo.isEmpty) {
-      _mostrarMensaje('Completa padre y nuevo Pokemon.', true);
+      _mostrarMensaje('Completa padre y nuevo Pokémon.', true);
       return;
     }
 
@@ -126,7 +126,7 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
 
     if (!exito) {
       _mostrarMensaje(
-        'No se pudo insertar. Revisa si existe el padre o si el nombre ya esta en el arbol.',
+        'No se pudo insertar. Revisa si existe el padre o si el nombre ya está en el árbol.',
         true,
       );
       return;
@@ -134,7 +134,7 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
 
     _actualizarRecorridos();
     _controladorNuevo.clear();
-    _mostrarMensaje('Evolucion local insertada correctamente.', false);
+    _mostrarMensaje('Evolución local insertada correctamente.', false);
   }
 
   void _eliminarNodoLocal() {
@@ -143,12 +143,12 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
         .toLowerCase();
 
     if (_arbolPokemon.estaVacio()) {
-      _mostrarMensaje('Primero debes cargar un arbol evolutivo.', true);
+      _mostrarMensaje('Primero debes cargar un árbol evolutivo.', true);
       return;
     }
 
     if (nombreEliminar.isEmpty) {
-      _mostrarMensaje('Ingresa un Pokemon para eliminar.', true);
+      _mostrarMensaje('Ingresa un Pokémon para eliminar.', true);
       return;
     }
 
@@ -215,7 +215,7 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
       length: 4,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Arbol Evolutivo Pokemon'),
+          title: const Text('Árbol Evolutivo Pokémon'),
           centerTitle: true,
           bottom: TabBar(
             isScrollable: true,
@@ -240,10 +240,10 @@ class _PantallaArbolPokemonState extends State<PantallaArbolPokemon> {
               Tab(icon: Icon(Icons.construction_rounded), text: 'Operaciones'),
               Tab(
                 icon: Icon(Icons.account_tree_rounded),
-                text: 'Vista del arbol',
+                text: 'Vista del árbol',
               ),
               Tab(icon: Icon(Icons.route_rounded), text: 'Recorridos'),
-              Tab(icon: Icon(Icons.analytics_rounded), text: 'Analisis'),
+              Tab(icon: Icon(Icons.analytics_rounded), text: 'Análisis'),
             ],
           ),
         ),

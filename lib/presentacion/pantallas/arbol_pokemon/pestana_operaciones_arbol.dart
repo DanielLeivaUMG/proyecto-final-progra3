@@ -42,7 +42,7 @@ class PestanaOperacionesArbol extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SeccionArbol(
-            texto: 'Operaciones del arbol evolutivo',
+            texto: 'Operaciones del árbol evolutivo',
             icono: Icons.construction_rounded,
           ),
           const SizedBox(height: 10),
@@ -53,14 +53,14 @@ class PestanaOperacionesArbol extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Cargar arbol desde PokeAPI',
+                    'Cargar árbol desde PokeAPI',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   TextField(
                     controller: controladorCarga,
                     decoration: InputDecoration(
-                      labelText: 'Pokemon base (nombre o id)',
+                      labelText: 'Pokémon base (nombre o id)',
                       hintText: 'Ejemplo: pikachu o 25',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -72,7 +72,7 @@ class PestanaOperacionesArbol extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: cargandoArbol ? null : onCargarArbol,
                     icon: const Icon(Icons.cloud_download_rounded),
-                    label: Text(cargandoArbol ? 'Cargando...' : 'Cargar arbol'),
+                    label: Text(cargandoArbol ? 'Cargando...' : 'Cargar árbol'),
                   ),
                 ],
               ),
@@ -91,7 +91,7 @@ class PestanaOperacionesArbol extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Buscar Pokemon en el arbol',
+                    'Buscar Pokémon en el árbol',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
@@ -121,7 +121,7 @@ class PestanaOperacionesArbol extends StatelessWidget {
                     ),
                     child: Text(
                       !seHaBuscado
-                          ? 'Resultado: sin busqueda'
+                          ? 'Resultado: sin búsqueda'
                           : pokemonEncontrado == null
                           ? 'Resultado: no encontrado'
                           : 'Resultado: ${pokemonEncontrado!.nombre}',
@@ -139,14 +139,14 @@ class PestanaOperacionesArbol extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Insertar evolucion local',
+                    'Insertar evolución local',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   TextField(
                     controller: controladorPadre,
                     decoration: InputDecoration(
-                      labelText: 'Pokemon padre',
+                      labelText: 'Pokémon padre',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -156,7 +156,7 @@ class PestanaOperacionesArbol extends StatelessWidget {
                   TextField(
                     controller: controladorNuevo,
                     decoration: InputDecoration(
-                      labelText: 'Nueva evolucion',
+                      labelText: 'Nueva evolución',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),

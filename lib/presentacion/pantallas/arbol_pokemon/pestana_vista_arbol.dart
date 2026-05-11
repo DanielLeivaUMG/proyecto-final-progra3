@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_final_progra3/dominio/estructuras/arbol_pokemon.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/arbol_pokemon/widgets/seccion_arbol.dart';
+import 'package:proyecto_final_progra3/presentacion/pantallas/arbol_pokemon/widgets/tarjeta_nodo_arbol.dart';
 
 class PestanaVistaArbol extends StatelessWidget {
   const PestanaVistaArbol({
@@ -14,13 +15,22 @@ class PestanaVistaArbol extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Map<int, List<NodoArbolPokemon>> nodosPorNivel =
+        <int, List<NodoArbolPokemon>>{};
+    for (final MapEntry<NodoArbolPokemon, int> entrada in nodosConNivel) {
+      nodosPorNivel.putIfAbsent(entrada.value, () => <NodoArbolPokemon>[]);
+      nodosPorNivel[entrada.value]!.add(entrada.key);
+    }
+
+    final List<int> nivelesOrdenados = nodosPorNivel.keys.toList()..sort();
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SeccionArbol(
-            texto: 'Vista del arbol',
+            texto: 'Vista del árbol',
             icono: Icons.account_tree_rounded,
           ),
           const SizedBox(height: 10),
@@ -31,50 +41,88 @@ class PestanaVistaArbol extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Vista simple del arbol evolutivo',
+                    'Vista del árbol evolutivo por niveles',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
+                  const SizedBox(height: 6),
+                  if (!estaVacio)
+                    Text(
+                      'Niveles: ${nivelesOrdenados.length} · Pokémon totales: ${nodosConNivel.length}',
+                      style: const TextStyle(
+                        color: Colors.black54,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  if (!estaVacio) const SizedBox(height: 4),
+                  if (!estaVacio)
+                    const Text(
+                      'Cada nivel representa una etapa de evolución.',
+                      style: TextStyle(color: Colors.black54),
+                    ),
                   const SizedBox(height: 8),
                   if (estaVacio)
-                    const Text('Aun no hay un arbol cargado.')
+                    const Text('Aún no hay un árbol cargado.')
                   else
                     Column(
-                      children: nodosConNivel.map((
-                        MapEntry<NodoArbolPokemon, int> entrada,
-                      ) {
-                        final NodoArbolPokemon nodo = entrada.key;
-                        final int nivel = entrada.value;
+                      children: nivelesOrdenados.map((int nivel) {
+                        final List<NodoArbolPokemon> nodosNivel =
+                            nodosPorNivel[nivel]!;
                         return Container(
-                          margin: EdgeInsets.only(
-                            left: nivel * 20.0,
-                            bottom: 8,
-                          ),
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: nodo.esTemporal
-                                ? Colors.orange.withValues(alpha: 0.15)
-                                : Colors.blue.withValues(alpha: 0.10),
-                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.grey.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: ListTile(
-                            dense: true,
-                            leading: Icon(
-                              nodo.esTemporal
-                                  ? Icons.edit_note_rounded
-                                  : Icons.pets_rounded,
-                              color: nodo.esTemporal
-                                  ? Colors.orange.shade700
-                                  : Colors.blue,
-                            ),
-                            title: Text(nodo.pokemon.nombre),
-                            subtitle: Text('Nivel ${nivel + 1}'),
-                            trailing: nodo.esTemporal
-                                ? const Text(
-                                    'LOCAL',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )
-                                : null,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Nivel ${nivel + 1}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              LayoutBuilder(
+                                builder:
+                                    (
+                                      BuildContext context,
+                                      BoxConstraints constraints,
+                                    ) {
+                                      int columnas = 1;
+                                      if (constraints.maxWidth >= 860) {
+                                        columnas = 3;
+                                      } else if (constraints.maxWidth >= 560) {
+                                        columnas = 2;
+                                      }
+
+                                      final double anchoTarjeta =
+                                          (constraints.maxWidth -
+                                              (columnas - 1) * 10) /
+                                          columnas;
+
+                                      return Wrap(
+                                        spacing: 10,
+                                        runSpacing: 10,
+                                        children: nodosNivel
+                                            .map(
+                                              (NodoArbolPokemon nodo) =>
+                                                  SizedBox(
+                                                    width: anchoTarjeta,
+                                                    child: TarjetaNodoArbol(
+                                                      nodo: nodo,
+                                                      nivel: nivel,
+                                                      esRaiz: nivel == 0,
+                                                    ),
+                                                  ),
+                                            )
+                                            .toList(),
+                                      );
+                                    },
+                              ),
+                            ],
                           ),
                         );
                       }).toList(),
