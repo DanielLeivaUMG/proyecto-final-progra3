@@ -8,10 +8,14 @@ class PestanaVistaArbol extends StatelessWidget {
     super.key,
     required this.estaVacio,
     required this.nodosConNivel,
+    required this.nombresRutaResaltada,
+    required this.nombrePokemonEncontrado,
   });
 
   final bool estaVacio;
   final List<MapEntry<NodoArbolPokemon, int>> nodosConNivel;
+  final Set<String> nombresRutaResaltada;
+  final String? nombrePokemonEncontrado;
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +62,17 @@ class PestanaVistaArbol extends StatelessWidget {
                     const Text(
                       'Cada nivel representa una etapa de evolución.',
                       style: TextStyle(color: Colors.black54),
+                    ),
+                  if (!estaVacio && nombrePokemonEncontrado != null)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 6),
+                      child: Text(
+                        'Resaltado activo: ruta en amarillo y Pokémon encontrado en verde.',
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   const SizedBox(height: 8),
                   if (estaVacio)
@@ -106,19 +121,32 @@ class PestanaVistaArbol extends StatelessWidget {
                                       return Wrap(
                                         spacing: 10,
                                         runSpacing: 10,
-                                        children: nodosNivel
-                                            .map(
-                                              (NodoArbolPokemon nodo) =>
-                                                  SizedBox(
-                                                    width: anchoTarjeta,
-                                                    child: TarjetaNodoArbol(
-                                                      nodo: nodo,
-                                                      nivel: nivel,
-                                                      esRaiz: nivel == 0,
-                                                    ),
-                                                  ),
-                                            )
-                                            .toList(),
+                                        children: nodosNivel.map((
+                                          NodoArbolPokemon nodo,
+                                        ) {
+                                          final String nombreNormalizado = nodo
+                                              .pokemon
+                                              .nombre
+                                              .toLowerCase();
+                                          final bool esRutaResaltada =
+                                              nombresRutaResaltada.contains(
+                                                nombreNormalizado,
+                                              );
+                                          final bool esNodoEncontrado =
+                                              nombrePokemonEncontrado ==
+                                              nombreNormalizado;
+                                          return SizedBox(
+                                            width: anchoTarjeta,
+                                            child: TarjetaNodoArbol(
+                                              nodo: nodo,
+                                              nivel: nivel,
+                                              esRaiz: nivel == 0,
+                                              esRutaResaltada: esRutaResaltada,
+                                              esPokemonEncontrado:
+                                                  esNodoEncontrado,
+                                            ),
+                                          );
+                                        }).toList(),
                                       );
                                     },
                               ),
