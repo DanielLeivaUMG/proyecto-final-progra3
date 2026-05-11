@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_final_progra3/nucleo/tema/colores_app.dart';
-import 'package:proyecto_final_progra3/presentacion/pantallas/pantalla_arbol_pokemon.dart';
+import 'package:proyecto_final_progra3/presentacion/pantallas/arbol_pokemon/pantalla_arbol_pokemon.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/pantalla_lista_pokemon.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/pantalla_pila_pokemon.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/pantalla_tabla_hash_pokemon.dart';
