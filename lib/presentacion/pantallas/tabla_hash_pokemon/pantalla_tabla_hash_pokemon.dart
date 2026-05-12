@@ -537,11 +537,13 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
               resolverNombreTipo: _nombreTipoMostrado,
               resolverRelacionesTipo: _relacionesTipo,
               onEliminarPokemon: _eliminarPokemonDelEquipo,
+              onGuardarEquipo: _guardarEquipoActualEnRecientes,
+              puedeGuardarEquipo:
+                  _equipoPokemon.cantidad == 6 && !_cargandoRecientes,
             ),
             PestanaRecientesHash(
               equiposRecientes: _equiposRecientesPokemon.obtenerTodos(),
               cargandoOperacion: _cargandoRecientes,
-              onGuardarEquipoActual: _guardarEquipoActualEnRecientes,
               onCargarEquipo: _cargarEquipoReciente,
               onEliminarEquipo: _eliminarEquipoReciente,
               onLimpiarRecientes: _limpiarEquiposRecientes,

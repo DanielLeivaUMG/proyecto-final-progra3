@@ -37,28 +37,6 @@ class PestanaAnalisisHash extends StatelessWidget {
     'fairy',
   ];
 
-  static const Map<String, List<String>> _recomendacionesDefensivasPorAmenaza =
-      <String, List<String>>{
-        'fire': <String>['water', 'rock', 'dragon'],
-        'water': <String>['water', 'grass', 'dragon'],
-        'grass': <String>['fire', 'flying', 'steel'],
-        'electric': <String>['ground', 'grass', 'dragon'],
-        'rock': <String>['fighting', 'ground', 'steel'],
-        'ground': <String>['grass', 'bug', 'flying'],
-        'ice': <String>['fire', 'water', 'steel'],
-        'fighting': <String>['psychic', 'flying', 'fairy'],
-        'poison': <String>['ground', 'rock', 'ghost'],
-        'flying': <String>['electric', 'rock', 'steel'],
-        'psychic': <String>['steel', 'psychic', 'dark'],
-        'bug': <String>['fire', 'fighting', 'flying'],
-        'ghost': <String>['dark', 'normal', 'fairy'],
-        'dragon': <String>['steel', 'fairy', 'dragon'],
-        'dark': <String>['fighting', 'fairy', 'dark'],
-        'steel': <String>['fire', 'water', 'electric'],
-        'fairy': <String>['poison', 'steel', 'fire'],
-        'normal': <String>['rock', 'steel', 'ghost'],
-      };
-
   @override
   Widget build(BuildContext context) {
     if (equipo.isEmpty) {
@@ -99,7 +77,7 @@ class PestanaAnalisisHash extends StatelessWidget {
       tipoMasPeligrosoMostrado: tipoMasPeligrosoMostrado,
     );
     final List<String> recomendacionesDefensivas = _generarRecomendaciones(
-      tipoMasPeligroso,
+      top3Riesgos,
     );
     final bool hayAmenazaCritica = _hayAmenazaCritica(tipoMasPeligroso);
 
@@ -485,13 +463,172 @@ class PestanaAnalisisHash extends StatelessWidget {
     return 'No hay una amenaza crítica. El equipo tiene cobertura defensiva aceptable.';
   }
 
-  List<String> _generarRecomendaciones(_FilaMatrizDefensiva? tipoMasPeligroso) {
+  List<String> _generarRecomendaciones(List<_FilaMatrizDefensiva> topRiesgos) {
+    final _FilaMatrizDefensiva? tipoMasPeligroso = topRiesgos.isEmpty
+        ? null
+        : topRiesgos.first;
     if (!_hayAmenazaCritica(tipoMasPeligroso)) {
       return <String>[];
     }
 
-    final String tipo = tipoMasPeligroso!.tipoAtacante;
-    return _recomendacionesDefensivasPorAmenaza[tipo] ?? <String>[];
+    final Set<String> tiposEquipo = _obtenerTiposDelEquipo();
+    final List<_FilaMatrizDefensiva> amenazas = topRiesgos.take(3).toList();
+    final List<_RecomendacionTipo> evaluadas = <_RecomendacionTipo>[];
+
+    for (final String candidato in _tiposBase) {
+      final String tipoCandidato = _normalizar(candidato);
+      if (tipoCandidato.isEmpty) {
+        continue;
+      }
+
+      final bool yaExisteEnEquipo = tiposEquipo.contains(tipoCandidato);
+      bool empeoraAmenazaAlta = false;
+      double puntaje = 0;
+
+      for (int i = 0; i < amenazas.length; i++) {
+        final _FilaMatrizDefensiva amenaza = amenazas[i];
+        final double prioridadPosicion = (3 - i).toDouble();
+        final double prioridadSeveridad =
+            1 + (amenaza.debiles * 0.35) + (amenaza.muyDebiles * 0.65);
+        final double pesoAmenaza = prioridadPosicion * prioridadSeveridad;
+        final double factorDefensivo = _obtenerFactorDefensivoCandidato(
+          tipoDefensor: tipoCandidato,
+          tipoAtacante: amenaza.tipoAtacante,
+        );
+
+        if (_esIgual(factorDefensivo, 0)) {
+          puntaje += 8 * pesoAmenaza;
+        } else if (factorDefensivo <= 0.5) {
+          puntaje += 4 * pesoAmenaza;
+        } else if (_esIgual(factorDefensivo, 1)) {
+          puntaje += 1 * pesoAmenaza;
+        } else if (factorDefensivo >= 2) {
+          puntaje -= 5 * pesoAmenaza;
+          if (amenaza.riesgo == 'Alto') {
+            puntaje -= 2.5 * pesoAmenaza;
+            empeoraAmenazaAlta = true;
+          }
+        }
+      }
+
+      if (yaExisteEnEquipo) {
+        puntaje -= 3.5;
+      } else {
+        puntaje += 1.0;
+      }
+
+      final RelacionesDanioTipo? relaciones = tablaHashTiposPokemon.buscarTipo(
+        tipoCandidato,
+      );
+      if (relaciones == null) {
+        puntaje -= 1.0;
+      }
+
+      if (empeoraAmenazaAlta) {
+        puntaje -= 6;
+      }
+
+      evaluadas.add(
+        _RecomendacionTipo(
+          tipo: tipoCandidato,
+          puntaje: puntaje,
+          yaExisteEnEquipo: yaExisteEnEquipo,
+          empeoraAmenazaAlta: empeoraAmenazaAlta,
+        ),
+      );
+    }
+
+    evaluadas.sort((_RecomendacionTipo a, _RecomendacionTipo b) {
+      final int comparacionPuntaje = b.puntaje.compareTo(a.puntaje);
+      if (comparacionPuntaje != 0) {
+        return comparacionPuntaje;
+      }
+
+      if (a.yaExisteEnEquipo != b.yaExisteEnEquipo) {
+        return a.yaExisteEnEquipo ? 1 : -1;
+      }
+
+      return a.tipo.compareTo(b.tipo);
+    });
+
+    final List<String> recomendados = evaluadas
+        .where(
+          (_RecomendacionTipo item) =>
+              item.puntaje > 0 &&
+              !item.empeoraAmenazaAlta &&
+              !item.yaExisteEnEquipo,
+        )
+        .take(3)
+        .map((_RecomendacionTipo item) => item.tipo)
+        .toList();
+
+    if (recomendados.length >= 3) {
+      return recomendados;
+    }
+
+    final Set<String> recomendadosSet = recomendados.toSet();
+    for (final _RecomendacionTipo item in evaluadas) {
+      if (recomendadosSet.contains(item.tipo)) {
+        continue;
+      }
+      if (item.puntaje <= 0 || item.empeoraAmenazaAlta) {
+        continue;
+      }
+      recomendados.add(item.tipo);
+      recomendadosSet.add(item.tipo);
+      if (recomendados.length == 3) {
+        break;
+      }
+    }
+
+    return recomendados;
+  }
+
+  Set<String> _obtenerTiposDelEquipo() {
+    final Set<String> tipos = <String>{};
+    for (final Pokemon pokemon in equipo) {
+      for (final String tipo in pokemon.tipos) {
+        final String normalizado = _normalizar(tipo);
+        if (normalizado.isNotEmpty) {
+          tipos.add(normalizado);
+        }
+      }
+    }
+    return tipos;
+  }
+
+  double _obtenerFactorDefensivoCandidato({
+    required String tipoDefensor,
+    required String tipoAtacante,
+  }) {
+    final RelacionesDanioTipo? relaciones = tablaHashTiposPokemon.buscarTipo(
+      _normalizar(tipoDefensor),
+    );
+    if (relaciones == null) {
+      return 1;
+    }
+
+    final String atacante = _normalizar(tipoAtacante);
+    if (_contieneTipo(relaciones.sinDanioDe, atacante)) {
+      return 0;
+    }
+    if (_contieneTipo(relaciones.medioDanioDe, atacante)) {
+      return 0.5;
+    }
+    if (_contieneTipo(relaciones.dobleDanioDe, atacante)) {
+      return 2;
+    }
+
+    return 1;
+  }
+
+  bool _contieneTipo(List<String> tipos, String tipoBuscado) {
+    for (final String tipo in tipos) {
+      if (_normalizar(tipo) == tipoBuscado) {
+        return true;
+      }
+    }
+    return false;
   }
 
   String _normalizar(String valor) {
@@ -523,6 +660,20 @@ class _FilaMatrizDefensiva {
   final int muyDebiles;
   final double sumaMultiplicadores;
   final String riesgo;
+}
+
+class _RecomendacionTipo {
+  const _RecomendacionTipo({
+    required this.tipo,
+    required this.puntaje,
+    required this.yaExisteEnEquipo,
+    required this.empeoraAmenazaAlta,
+  });
+
+  final String tipo;
+  final double puntaje;
+  final bool yaExisteEnEquipo;
+  final bool empeoraAmenazaAlta;
 }
 
 class _TarjetaTopRiesgos extends StatelessWidget {
@@ -646,7 +797,7 @@ class _TarjetaRecomendaciones extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
             ),
             const SizedBox(height: 8),
-            if (!hayAmenazaCritica)
+            if (!hayAmenazaCritica || recomendaciones.isEmpty)
               const Text(
                 'No hay una amenaza crítica. El equipo tiene cobertura defensiva aceptable.',
               )
