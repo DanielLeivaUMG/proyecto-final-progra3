@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_final_progra3/dominio/entidades/pokemon.dart';
+import 'package:proyecto_final_progra3/dominio/entidades/relaciones_danio_tipo.dart';
 import 'package:proyecto_final_progra3/dominio/estructuras/tabla_hash_tipos_pokemon.dart';
 
 class PestanaAnalisisHash extends StatelessWidget {
@@ -7,10 +8,12 @@ class PestanaAnalisisHash extends StatelessWidget {
     super.key,
     required this.equipo,
     required this.tablaHashTiposPokemon,
+    required this.cargandoTipos,
   });
 
   final List<Pokemon> equipo;
   final TablaHashTiposPokemon tablaHashTiposPokemon;
+  final bool cargandoTipos;
 
   static const List<String> _tiposBase = <String>[
     'normal',
@@ -64,6 +67,9 @@ class PestanaAnalisisHash extends StatelessWidget {
     final _FilaMatrizDefensiva? tipoMasPeligroso = _obtenerTipoMasPeligroso(
       filas,
     );
+    final String? tipoMasPeligrosoMostrado = tipoMasPeligroso == null
+        ? null
+        : _nombreTipoMostrado(tipoMasPeligroso.tipoAtacante);
 
     return SafeArea(
       child: ListView(
@@ -72,7 +78,7 @@ class PestanaAnalisisHash extends StatelessWidget {
           _ResumenAnalisisBasico(
             cantidadPokemon: equipo.length,
             cantidadTiposCargados: tablaHashTiposPokemon.cantidad,
-            tipoMasPeligroso: tipoMasPeligroso?.tipoAtacante,
+            tipoMasPeligroso: tipoMasPeligrosoMostrado,
             vulnerabilidadesTotales: vulnerabilidadesTotales,
           ),
           const SizedBox(height: 12),
@@ -87,6 +93,15 @@ class PestanaAnalisisHash extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                   ),
                   const SizedBox(height: 10),
+                  if (cargandoTipos) ...[
+                    const LinearProgressIndicator(),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Cargando nombres localizados de tipos...',
+                      style: TextStyle(fontSize: 12.5, color: Colors.black54),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
                   const Text(
                     'Desliza horizontalmente para ver todos los Pokémon del equipo.',
                     style: TextStyle(fontSize: 12.5, color: Colors.black54),
@@ -212,7 +227,7 @@ class PestanaAnalisisHash extends StatelessWidget {
   DataRow _construirFilaTabla(_FilaMatrizDefensiva fila) {
     return DataRow(
       cells: [
-        DataCell(Text(_capitalizar(fila.tipoAtacante))),
+        DataCell(Text(_nombreTipoMostrado(fila.tipoAtacante))),
         ...fila.multiplicadores.map(
           (double valor) => DataCell(
             _ChipMultiplicador(
@@ -319,6 +334,19 @@ class PestanaAnalisisHash extends StatelessWidget {
     return '${valor[0].toUpperCase()}${valor.substring(1)}';
   }
 
+  String _nombreTipoMostrado(String tipoInterno) {
+    final String tipoNormalizado = _normalizar(tipoInterno);
+    final RelacionesDanioTipo? relaciones = tablaHashTiposPokemon.buscarTipo(
+      tipoNormalizado,
+    );
+    final String nombre = relaciones?.nombreMostrado.trim() ?? '';
+    if (nombre.isNotEmpty) {
+      return nombre;
+    }
+
+    return _capitalizar(tipoNormalizado);
+  }
+
   String _normalizar(String valor) {
     return valor.trim().toLowerCase();
   }
@@ -378,10 +406,7 @@ class _ResumenAnalisisBasico extends StatelessWidget {
             ),
             _FichaResumen(
               titulo: 'Más peligroso',
-              valor: tipoMasPeligroso == null
-                  ? '-'
-                  : tipoMasPeligroso![0].toUpperCase() +
-                        tipoMasPeligroso!.substring(1),
+              valor: tipoMasPeligroso ?? '-',
             ),
             _FichaResumen(
               titulo: 'Vulnerabilidades',

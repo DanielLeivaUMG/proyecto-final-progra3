@@ -7,12 +7,14 @@ class BuscadorTipoHash extends StatelessWidget {
     required this.controladorBuscarTipo,
     required this.seBuscoTipo,
     required this.tipoEncontrado,
+    required this.resolverNombreTipo,
     required this.onBuscarTipo,
   });
 
   final TextEditingController controladorBuscarTipo;
   final bool seBuscoTipo;
   final RelacionesDanioTipo? tipoEncontrado;
+  final String Function(String tipoInterno) resolverNombreTipo;
   final VoidCallback onBuscarTipo;
 
   @override
@@ -62,18 +64,18 @@ class BuscadorTipoHash extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Tipo: ${tipoEncontrado!.tipo}',
+                    'Tipo: ${tipoEncontrado!.nombreMostrado}',
                     style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Sin daño de: ${tipoEncontrado!.sinDanioDe.isEmpty ? "-" : tipoEncontrado!.sinDanioDe.join(", ")}',
+                    'Sin daño de: ${tipoEncontrado!.sinDanioDe.isEmpty ? "-" : tipoEncontrado!.sinDanioDe.map(resolverNombreTipo).join(", ")}',
                   ),
                   Text(
-                    'Medio daño de: ${tipoEncontrado!.medioDanioDe.isEmpty ? "-" : tipoEncontrado!.medioDanioDe.join(", ")}',
+                    'Medio daño de: ${tipoEncontrado!.medioDanioDe.isEmpty ? "-" : tipoEncontrado!.medioDanioDe.map(resolverNombreTipo).join(", ")}',
                   ),
                   Text(
-                    'Doble daño de: ${tipoEncontrado!.dobleDanioDe.isEmpty ? "-" : tipoEncontrado!.dobleDanioDe.join(", ")}',
+                    'Doble daño de: ${tipoEncontrado!.dobleDanioDe.isEmpty ? "-" : tipoEncontrado!.dobleDanioDe.map(resolverNombreTipo).join(", ")}',
                   ),
                 ],
               ),
