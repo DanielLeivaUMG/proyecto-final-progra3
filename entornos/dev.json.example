@@ -1,4 +1,5 @@
 {
   "API_URL_BASE": "https://pokeapi.co/api/v2",
-  "POKEAPI_SPRITES_URL_BASE": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon"
+  "POKEAPI_SPRITES_URL_BASE": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon",
+  "POKEAPI_TYPE_ICONS_URL_BASE": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield"
 }

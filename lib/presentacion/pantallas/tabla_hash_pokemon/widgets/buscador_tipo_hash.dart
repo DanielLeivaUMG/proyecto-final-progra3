@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_final_progra3/dominio/entidades/relaciones_danio_tipo.dart';
+import 'package:proyecto_final_progra3/presentacion/widgets/chip_tipo_pokemon.dart';
 
 class BuscadorTipoHash extends StatelessWidget {
   const BuscadorTipoHash({
@@ -8,6 +9,7 @@ class BuscadorTipoHash extends StatelessWidget {
     required this.seBuscoTipo,
     required this.tipoEncontrado,
     required this.resolverNombreTipo,
+    required this.resolverRelacionesTipo,
     required this.onBuscarTipo,
   });
 
@@ -15,6 +17,8 @@ class BuscadorTipoHash extends StatelessWidget {
   final bool seBuscoTipo;
   final RelacionesDanioTipo? tipoEncontrado;
   final String Function(String tipoInterno) resolverNombreTipo;
+  final RelacionesDanioTipo? Function(String tipoInterno)
+  resolverRelacionesTipo;
   final VoidCallback onBuscarTipo;
 
   @override
@@ -63,25 +67,98 @@ class BuscadorTipoHash extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Tipo: ${tipoEncontrado!.nombreMostrado}',
-                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  Row(
+                    children: [
+                      const Text(
+                        'Tipo:',
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                      const SizedBox(width: 6),
+                      ChipTipoPokemon(
+                        idTipo: tipoEncontrado!.idTipo,
+                        nombre: tipoEncontrado!.nombreMostrado,
+                        modoBadge: true,
+                        anchoBadge: 84,
+                        altoBadge: 26,
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 6),
-                  Text(
-                    'Sin daño de: ${tipoEncontrado!.sinDanioDe.isEmpty ? "-" : tipoEncontrado!.sinDanioDe.map(resolverNombreTipo).join(", ")}',
+                  _BloqueRelacionesTipos(
+                    etiqueta: 'Sin daño de',
+                    tipos: tipoEncontrado!.sinDanioDe,
+                    resolverNombreTipo: resolverNombreTipo,
+                    resolverRelacionesTipo: resolverRelacionesTipo,
                   ),
-                  Text(
-                    'Medio daño de: ${tipoEncontrado!.medioDanioDe.isEmpty ? "-" : tipoEncontrado!.medioDanioDe.map(resolverNombreTipo).join(", ")}',
+                  const SizedBox(height: 6),
+                  _BloqueRelacionesTipos(
+                    etiqueta: 'Medio daño de',
+                    tipos: tipoEncontrado!.medioDanioDe,
+                    resolverNombreTipo: resolverNombreTipo,
+                    resolverRelacionesTipo: resolverRelacionesTipo,
                   ),
-                  Text(
-                    'Doble daño de: ${tipoEncontrado!.dobleDanioDe.isEmpty ? "-" : tipoEncontrado!.dobleDanioDe.map(resolverNombreTipo).join(", ")}',
+                  const SizedBox(height: 6),
+                  _BloqueRelacionesTipos(
+                    etiqueta: 'Doble daño de',
+                    tipos: tipoEncontrado!.dobleDanioDe,
+                    resolverNombreTipo: resolverNombreTipo,
+                    resolverRelacionesTipo: resolverRelacionesTipo,
                   ),
                 ],
               ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _BloqueRelacionesTipos extends StatelessWidget {
+  const _BloqueRelacionesTipos({
+    required this.etiqueta,
+    required this.tipos,
+    required this.resolverNombreTipo,
+    required this.resolverRelacionesTipo,
+  });
+
+  final String etiqueta;
+  final List<String> tipos;
+  final String Function(String tipoInterno) resolverNombreTipo;
+  final RelacionesDanioTipo? Function(String tipoInterno)
+  resolverRelacionesTipo;
+
+  @override
+  Widget build(BuildContext context) {
+    if (tipos.isEmpty) {
+      return Text('$etiqueta: -');
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '$etiqueta:',
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12.5),
+        ),
+        const SizedBox(height: 4),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: tipos.map((String tipoInterno) {
+            final RelacionesDanioTipo? relaciones = resolverRelacionesTipo(
+              tipoInterno,
+            );
+            return ChipTipoPokemon(
+              idTipo: relaciones?.idTipo,
+              nombre: resolverNombreTipo(tipoInterno),
+              modoBadge: true,
+              compacto: true,
+              anchoBadge: 74,
+              altoBadge: 24,
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 }

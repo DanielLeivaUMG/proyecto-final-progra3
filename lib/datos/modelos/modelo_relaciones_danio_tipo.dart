@@ -2,6 +2,7 @@ import 'package:proyecto_final_progra3/dominio/entidades/relaciones_danio_tipo.d
 
 class ModeloRelacionesDanioTipo {
   const ModeloRelacionesDanioTipo({
+    this.idTipo,
     required this.tipo,
     required this.nombreMostrado,
     required this.sinDanioDe,
@@ -9,6 +10,7 @@ class ModeloRelacionesDanioTipo {
     required this.dobleDanioDe,
   });
 
+  final int? idTipo;
   final String tipo;
   final String nombreMostrado;
   final List<String> sinDanioDe;
@@ -16,6 +18,7 @@ class ModeloRelacionesDanioTipo {
   final List<String> dobleDanioDe;
 
   factory ModeloRelacionesDanioTipo.fromJson(Map<String, dynamic> json) {
+    final int? idTipo = json['id'] is int ? json['id'] as int : null;
     final String tipo = (json['name'] as String? ?? '').toLowerCase();
     final String nombreMostrado = _extraerNombreEspanol(json['names'], tipo);
     final Map<String, dynamic> relaciones =
@@ -23,6 +26,7 @@ class ModeloRelacionesDanioTipo {
         <String, dynamic>{};
 
     return ModeloRelacionesDanioTipo(
+      idTipo: idTipo,
       tipo: tipo,
       nombreMostrado: nombreMostrado,
       sinDanioDe: _extraerNombres(relaciones['no_damage_from']),
@@ -33,6 +37,7 @@ class ModeloRelacionesDanioTipo {
 
   RelacionesDanioTipo aEntidad() {
     return RelacionesDanioTipo(
+      idTipo: idTipo,
       tipo: tipo,
       nombreMostrado: nombreMostrado,
       sinDanioDe: sinDanioDe,
