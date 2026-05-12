@@ -224,6 +224,8 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Pokemon> equipoActual = _equipoPokemon.obtenerEquipo();
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -254,7 +256,7 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
               cantidadTipos: _tablaTiposPokemon.cantidad,
               estadoEquipo: _estadoEquipo(),
               colorEstado: _colorEstadoEquipo(),
-              equipo: _equipoPokemon.obtenerEquipo(),
+              equipo: equipoActual,
               seBuscoPokemon: _seBuscoPokemon,
               pokemonEncontrado: _pokemonEncontrado,
               seBuscoTipo: _seBuscoTipo,
@@ -265,7 +267,10 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
               onEliminarPokemon: _eliminarPokemonDelEquipo,
             ),
             const PestanaRecientesHash(),
-            const PestanaAnalisisHash(),
+            PestanaAnalisisHash(
+              equipo: equipoActual,
+              tablaHashTiposPokemon: _tablaTiposPokemon,
+            ),
           ],
         ),
       ),
