@@ -19,6 +19,27 @@ class PantallaTablaHashPokemon extends StatefulWidget {
 }
 
 class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
+  static const List<String> _tiposBaseAnalisis = <String>[
+    'normal',
+    'fire',
+    'water',
+    'electric',
+    'grass',
+    'ice',
+    'fighting',
+    'poison',
+    'ground',
+    'flying',
+    'psychic',
+    'bug',
+    'rock',
+    'ghost',
+    'dragon',
+    'dark',
+    'steel',
+    'fairy',
+  ];
+
   final ServicioPokeapi _servicioPokeapi = ServicioPokeapi();
   final EquipoPokemon _equipoPokemon = EquipoPokemon();
   final TablaHashTiposPokemon _tablaTiposPokemon = TablaHashTiposPokemon();
@@ -36,6 +57,7 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
   bool _seBuscoTipo = false;
   bool _cargandoAgregar = false;
   bool _cargandoRecientes = false;
+  bool _cargandoTiposAnalisis = false;
 
   @override
   void dispose() {
@@ -80,9 +102,9 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
         return;
       }
 
-      int tiposCargados = 0;
-      tiposCargados = await _cargarTiposFaltantes(
-        pokemones: <Pokemon>[pokemon],
+      final List<Pokemon> equipoActual = _equipoPokemon.obtenerEquipo();
+      final int tiposCargados = await _cargarTiposNecesariosParaAnalisis(
+        pokemonesEquipo: equipoActual,
       );
 
       if (!mounted) {
@@ -173,6 +195,21 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
       }
 
       _tipoEncontrado = _tablaTiposPokemon.buscarTipo(tipo);
+      if (_tipoEncontrado != null) {
+        return;
+      }
+
+      final String textoBusqueda = _normalizarTextoBusqueda(tipo);
+      for (final RelacionesDanioTipo relaciones
+          in _tablaTiposPokemon.obtenerTodos()) {
+        final String nombreMostrado = _normalizarTextoBusqueda(
+          relaciones.nombreMostrado,
+        );
+        if (textoBusqueda == nombreMostrado) {
+          _tipoEncontrado = relaciones;
+          return;
+        }
+      }
     });
 
     if (_seBuscoTipo && _tipoEncontrado == null) {
@@ -240,7 +277,7 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
         }
       }
 
-      await _cargarTiposFaltantes(pokemones: snapshot);
+      await _cargarTiposNecesariosParaAnalisis(pokemonesEquipo: snapshot);
 
       if (!mounted) {
         return;
@@ -288,31 +325,95 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
     _mostrarMensaje('Equipos recientes limpiados.');
   }
 
-  Future<int> _cargarTiposFaltantes({required List<Pokemon> pokemones}) async {
+  Future<int> _cargarTiposNecesariosParaAnalisis({
+    required List<Pokemon> pokemonesEquipo,
+  }) async {
+    if (_cargandoTiposAnalisis) {
+      return 0;
+    }
+
+    if (mounted) {
+      setState(() {
+        _cargandoTiposAnalisis = true;
+      });
+    }
+
     int tiposCargados = 0;
-    final Set<String> tiposUnicos = <String>{};
+    try {
+      final Set<String> pendientes = _recolectarTiposNecesarios(
+        pokemonesEquipo: pokemonesEquipo,
+      );
+      final Set<String> procesados = <String>{};
 
-    for (final Pokemon pokemon in pokemones) {
-      for (final String tipo in pokemon.tipos) {
-        final String tipoNormalizado = _normalizar(tipo);
-        if (tipoNormalizado.isNotEmpty) {
-          tiposUnicos.add(tipoNormalizado);
+      while (pendientes.isNotEmpty) {
+        final String tipo = pendientes.first;
+        pendientes.remove(tipo);
+
+        if (procesados.contains(tipo) ||
+            _tablaTiposPokemon.contieneTipo(tipo)) {
+          continue;
         }
+
+        final RelacionesDanioTipo relaciones = await _servicioPokeapi
+            .obtenerRelacionesDanioTipo(tipo);
+        _tablaTiposPokemon.insertarTipo(relaciones);
+        tiposCargados++;
+        procesados.add(tipo);
+
+        pendientes.addAll(_recolectarTiposDesdeRelaciones(relaciones));
+      }
+
+      return tiposCargados;
+    } finally {
+      if (mounted) {
+        setState(() {
+          _cargandoTiposAnalisis = false;
+        });
       }
     }
+  }
 
-    for (final String tipo in tiposUnicos) {
-      if (_tablaTiposPokemon.contieneTipo(tipo)) {
-        continue;
-      }
+  Set<String> _recolectarTiposNecesarios({
+    required List<Pokemon> pokemonesEquipo,
+  }) {
+    final Set<String> tipos = <String>{..._tiposBaseAnalisis};
 
-      final RelacionesDanioTipo relaciones = await _servicioPokeapi
-          .obtenerRelacionesDanioTipo(tipo);
-      _tablaTiposPokemon.insertarTipo(relaciones);
-      tiposCargados++;
+    for (final Pokemon pokemon in pokemonesEquipo) {
+      tipos.addAll(
+        pokemon.tipos.map(_normalizar).where((String tipo) => tipo.isNotEmpty),
+      );
     }
 
-    return tiposCargados;
+    for (final RelacionesDanioTipo relaciones
+        in _tablaTiposPokemon.obtenerTodos()) {
+      tipos.add(_normalizar(relaciones.tipo));
+      tipos.addAll(_recolectarTiposDesdeRelaciones(relaciones));
+    }
+
+    tipos.removeWhere((String tipo) => tipo.trim().isEmpty);
+    return tipos;
+  }
+
+  Set<String> _recolectarTiposDesdeRelaciones(RelacionesDanioTipo relaciones) {
+    final Set<String> tipos = <String>{};
+
+    tipos.addAll(
+      relaciones.sinDanioDe
+          .map(_normalizar)
+          .where((String tipo) => tipo.isNotEmpty),
+    );
+    tipos.addAll(
+      relaciones.medioDanioDe
+          .map(_normalizar)
+          .where((String tipo) => tipo.isNotEmpty),
+    );
+    tipos.addAll(
+      relaciones.dobleDanioDe
+          .map(_normalizar)
+          .where((String tipo) => tipo.isNotEmpty),
+    );
+
+    return tipos;
   }
 
   void _mostrarMensaje(String mensaje, {bool esError = false}) {
@@ -350,6 +451,29 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
 
   String _normalizar(String valor) {
     return valor.trim().toLowerCase();
+  }
+
+  String _normalizarTextoBusqueda(String valor) {
+    return _normalizar(valor)
+        .replaceAll('á', 'a')
+        .replaceAll('é', 'e')
+        .replaceAll('í', 'i')
+        .replaceAll('ó', 'o')
+        .replaceAll('ú', 'u')
+        .replaceAll('ü', 'u');
+  }
+
+  String _nombreTipoMostrado(String tipoInterno) {
+    final String clave = _normalizar(tipoInterno);
+    if (clave.isEmpty) {
+      return tipoInterno;
+    }
+
+    final RelacionesDanioTipo? relaciones = _tablaTiposPokemon.buscarTipo(
+      clave,
+    );
+    final String nombre = relaciones?.nombreMostrado.trim() ?? '';
+    return nombre.isEmpty ? tipoInterno : nombre;
   }
 
   String _formatearFechaHora(DateTime fecha) {
@@ -403,6 +527,7 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
               onAgregarPokemon: _agregarPokemonAlEquipo,
               onBuscarPokemon: _buscarPokemonEnEquipo,
               onBuscarTipo: _buscarTipoEnTabla,
+              resolverNombreTipo: _nombreTipoMostrado,
               onEliminarPokemon: _eliminarPokemonDelEquipo,
             ),
             PestanaRecientesHash(
@@ -416,6 +541,7 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
             PestanaAnalisisHash(
               equipo: equipoActual,
               tablaHashTiposPokemon: _tablaTiposPokemon,
+              cargandoTipos: _cargandoTiposAnalisis,
             ),
           ],
         ),

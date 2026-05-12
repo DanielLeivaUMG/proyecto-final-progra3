@@ -7,10 +7,12 @@ class TarjetaPokemonEquipo extends StatelessWidget {
   const TarjetaPokemonEquipo({
     super.key,
     required this.pokemon,
+    required this.resolverNombreTipo,
     required this.onEliminar,
   });
 
   final Pokemon pokemon;
+  final String Function(String tipoInterno) resolverNombreTipo;
   final VoidCallback onEliminar;
 
   @override
@@ -22,7 +24,7 @@ class TarjetaPokemonEquipo extends StatelessWidget {
         : pokemon.nombre;
     final String tiposTexto = pokemon.tipos.isEmpty
         ? 'Sin tipos'
-        : pokemon.tipos.join(', ');
+        : pokemon.tipos.map(resolverNombreTipo).join(', ');
 
     return Card(
       child: ListTile(

@@ -24,6 +24,7 @@ class PestanaEquipoHash extends StatelessWidget {
     required this.onAgregarPokemon,
     required this.onBuscarPokemon,
     required this.onBuscarTipo,
+    required this.resolverNombreTipo,
     required this.onEliminarPokemon,
   });
 
@@ -43,6 +44,7 @@ class PestanaEquipoHash extends StatelessWidget {
   final VoidCallback onAgregarPokemon;
   final VoidCallback onBuscarPokemon;
   final VoidCallback onBuscarTipo;
+  final String Function(String tipoInterno) resolverNombreTipo;
   final ValueChanged<Pokemon> onEliminarPokemon;
 
   @override
@@ -155,6 +157,7 @@ class PestanaEquipoHash extends StatelessWidget {
             controladorBuscarTipo: controladorBuscarTipo,
             seBuscoTipo: seBuscoTipo,
             tipoEncontrado: tipoEncontrado,
+            resolverNombreTipo: resolverNombreTipo,
             onBuscarTipo: onBuscarTipo,
           ),
           const SizedBox(height: 12),
@@ -176,6 +179,7 @@ class PestanaEquipoHash extends StatelessWidget {
             ...equipo.map(
               (Pokemon pokemon) => TarjetaPokemonEquipo(
                 pokemon: pokemon,
+                resolverNombreTipo: resolverNombreTipo,
                 onEliminar: () => onEliminarPokemon(pokemon),
               ),
             ),
