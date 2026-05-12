@@ -2,7 +2,10 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:proyecto_final_progra3/datos/modelos/modelo_pokemon.dart';
+import 'package:proyecto_final_progra3/datos/modelos/modelo_pokemon_detalle.dart';
+import 'package:proyecto_final_progra3/datos/modelos/modelo_relaciones_danio_tipo.dart';
 import 'package:proyecto_final_progra3/dominio/entidades/pokemon.dart';
+import 'package:proyecto_final_progra3/dominio/entidades/relaciones_danio_tipo.dart';
 import 'package:proyecto_final_progra3/dominio/estructuras/arbol_pokemon.dart';
 import 'package:proyecto_final_progra3/nucleo/configuracion/configuracion_api.dart';
 import 'package:proyecto_final_progra3/nucleo/constantes/api_constantes.dart';
@@ -14,6 +17,10 @@ class ServicioPokeapi {
 
   String obtenerUrlPokemonSpecies() {
     return '${ConfiguracionApi.urlBase}${ApiConstantes.endpointPokemonSpecies}';
+  }
+
+  String obtenerUrlTipos() {
+    return '${ConfiguracionApi.urlBase}${ApiConstantes.endpointType}';
   }
 
   Future<List<Pokemon>> obtenerPokemones() async {
@@ -33,6 +40,43 @@ class ServicioPokeapi {
     } else {
       throw Exception('Error al obtener los pokemones desde la API');
     }
+  }
+
+  Future<Pokemon> obtenerPokemonDetalle(String nombreOId) async {
+    final String valorBusqueda = nombreOId.trim().toLowerCase();
+    if (valorBusqueda.isEmpty) {
+      throw Exception('Debes ingresar un Pokemon valido.');
+    }
+
+    final Uri url = Uri.parse('${obtenerUrlPokemon()}/$valorBusqueda');
+    final http.Response respuesta = await http.get(url);
+    if (respuesta.statusCode != 200) {
+      throw Exception('No se pudo obtener el detalle del Pokemon solicitado.');
+    }
+
+    final Map<String, dynamic> datos =
+        json.decode(respuesta.body) as Map<String, dynamic>;
+    return ModeloPokemonDetalle.fromJson(
+      datos,
+      urlBasePokemon: obtenerUrlPokemon(),
+    ).aEntidad();
+  }
+
+  Future<RelacionesDanioTipo> obtenerRelacionesDanioTipo(String tipo) async {
+    final String tipoNormalizado = tipo.trim().toLowerCase();
+    if (tipoNormalizado.isEmpty) {
+      throw Exception('Debes ingresar un tipo de Pokemon valido.');
+    }
+
+    final Uri url = Uri.parse('${obtenerUrlTipos()}/$tipoNormalizado');
+    final http.Response respuesta = await http.get(url);
+    if (respuesta.statusCode != 200) {
+      throw Exception('No se pudo obtener el tipo solicitado.');
+    }
+
+    final Map<String, dynamic> datos =
+        json.decode(respuesta.body) as Map<String, dynamic>;
+    return ModeloRelacionesDanioTipo.fromJson(datos).aEntidad();
   }
 
   Future<NodoArbolPokemon> obtenerArbolEvolutivo(String nombreOId) async {

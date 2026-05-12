@@ -3,4 +3,5 @@ class ApiConstantes {
 
   static const String endpointPokemon = '/pokemon';
   static const String endpointPokemonSpecies = '/pokemon-species';
+  static const String endpointType = '/type';
 }
