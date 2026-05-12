@@ -469,11 +469,18 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
       return tipoInterno;
     }
 
-    final RelacionesDanioTipo? relaciones = _tablaTiposPokemon.buscarTipo(
-      clave,
-    );
+    final RelacionesDanioTipo? relaciones = _relacionesTipo(clave);
     final String nombre = relaciones?.nombreMostrado.trim() ?? '';
     return nombre.isEmpty ? tipoInterno : nombre;
+  }
+
+  RelacionesDanioTipo? _relacionesTipo(String tipoInterno) {
+    final String clave = _normalizar(tipoInterno);
+    if (clave.isEmpty) {
+      return null;
+    }
+
+    return _tablaTiposPokemon.buscarTipo(clave);
   }
 
   String _formatearFechaHora(DateTime fecha) {
@@ -528,6 +535,7 @@ class _PantallaTablaHashPokemonState extends State<PantallaTablaHashPokemon> {
               onBuscarPokemon: _buscarPokemonEnEquipo,
               onBuscarTipo: _buscarTipoEnTabla,
               resolverNombreTipo: _nombreTipoMostrado,
+              resolverRelacionesTipo: _relacionesTipo,
               onEliminarPokemon: _eliminarPokemonDelEquipo,
             ),
             PestanaRecientesHash(

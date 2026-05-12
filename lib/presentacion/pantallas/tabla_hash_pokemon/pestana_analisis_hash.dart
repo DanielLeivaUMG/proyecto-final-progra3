@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:proyecto_final_progra3/dominio/entidades/pokemon.dart';
 import 'package:proyecto_final_progra3/dominio/entidades/relaciones_danio_tipo.dart';
 import 'package:proyecto_final_progra3/dominio/estructuras/tabla_hash_tipos_pokemon.dart';
+import 'package:proyecto_final_progra3/presentacion/widgets/chip_tipo_pokemon.dart';
 
 class PestanaAnalisisHash extends StatelessWidget {
   const PestanaAnalisisHash({
@@ -36,6 +37,28 @@ class PestanaAnalisisHash extends StatelessWidget {
     'fairy',
   ];
 
+  static const Map<String, List<String>> _recomendacionesDefensivasPorAmenaza =
+      <String, List<String>>{
+        'fire': <String>['water', 'rock', 'dragon'],
+        'water': <String>['water', 'grass', 'dragon'],
+        'grass': <String>['fire', 'flying', 'steel'],
+        'electric': <String>['ground', 'grass', 'dragon'],
+        'rock': <String>['fighting', 'ground', 'steel'],
+        'ground': <String>['grass', 'bug', 'flying'],
+        'ice': <String>['fire', 'water', 'steel'],
+        'fighting': <String>['psychic', 'flying', 'fairy'],
+        'poison': <String>['ground', 'rock', 'ghost'],
+        'flying': <String>['electric', 'rock', 'steel'],
+        'psychic': <String>['steel', 'psychic', 'dark'],
+        'bug': <String>['fire', 'fighting', 'flying'],
+        'ghost': <String>['dark', 'normal', 'fairy'],
+        'dragon': <String>['steel', 'fairy', 'dragon'],
+        'dark': <String>['fighting', 'fairy', 'dark'],
+        'steel': <String>['fire', 'water', 'electric'],
+        'fairy': <String>['poison', 'steel', 'fire'],
+        'normal': <String>['rock', 'steel', 'ghost'],
+      };
+
   @override
   Widget build(BuildContext context) {
     if (equipo.isEmpty) {
@@ -67,9 +90,18 @@ class PestanaAnalisisHash extends StatelessWidget {
     final _FilaMatrizDefensiva? tipoMasPeligroso = _obtenerTipoMasPeligroso(
       filas,
     );
+    final List<_FilaMatrizDefensiva> top3Riesgos = _obtenerTop3Riesgos(filas);
     final String? tipoMasPeligrosoMostrado = tipoMasPeligroso == null
         ? null
         : _nombreTipoMostrado(tipoMasPeligroso.tipoAtacante);
+    final String diagnostico = _generarDiagnostico(
+      tipoMasPeligroso: tipoMasPeligroso,
+      tipoMasPeligrosoMostrado: tipoMasPeligrosoMostrado,
+    );
+    final List<String> recomendacionesDefensivas = _generarRecomendaciones(
+      tipoMasPeligroso,
+    );
+    final bool hayAmenazaCritica = _hayAmenazaCritica(tipoMasPeligroso);
 
     return SafeArea(
       child: ListView(
@@ -80,6 +112,21 @@ class PestanaAnalisisHash extends StatelessWidget {
             cantidadTiposCargados: tablaHashTiposPokemon.cantidad,
             tipoMasPeligroso: tipoMasPeligrosoMostrado,
             vulnerabilidadesTotales: vulnerabilidadesTotales,
+          ),
+          const SizedBox(height: 12),
+          _TarjetaTopRiesgos(
+            filasTopRiesgo: top3Riesgos,
+            resolverNombreTipo: _nombreTipoMostrado,
+            resolverIdTipo: _obtenerIdTipo,
+          ),
+          const SizedBox(height: 12),
+          _TarjetaDiagnostico(texto: diagnostico),
+          const SizedBox(height: 12),
+          _TarjetaRecomendaciones(
+            recomendaciones: recomendacionesDefensivas,
+            hayAmenazaCritica: hayAmenazaCritica,
+            resolverNombreTipo: _nombreTipoMostrado,
+            resolverIdTipo: _obtenerIdTipo,
           ),
           const SizedBox(height: 12),
           Card(
@@ -142,6 +189,37 @@ class PestanaAnalisisHash extends StatelessWidget {
     );
   }
 
+  List<_FilaMatrizDefensiva> _obtenerTop3Riesgos(
+    List<_FilaMatrizDefensiva> filas,
+  ) {
+    final List<_FilaMatrizDefensiva> ordenadas =
+        List<_FilaMatrizDefensiva>.from(filas)
+          ..sort((_FilaMatrizDefensiva a, _FilaMatrizDefensiva b) {
+            final int comparacionDebiles = b.debiles.compareTo(a.debiles);
+            if (comparacionDebiles != 0) {
+              return comparacionDebiles;
+            }
+
+            final int comparacionMuyDebiles = b.muyDebiles.compareTo(
+              a.muyDebiles,
+            );
+            if (comparacionMuyDebiles != 0) {
+              return comparacionMuyDebiles;
+            }
+
+            final int comparacionSuma = b.sumaMultiplicadores.compareTo(
+              a.sumaMultiplicadores,
+            );
+            if (comparacionSuma != 0) {
+              return comparacionSuma;
+            }
+
+            return a.tipoAtacante.compareTo(b.tipoAtacante);
+          });
+
+    return ordenadas.take(3).toList();
+  }
+
   List<String> _obtenerTiposAtacantes() {
     final List<String> tiposCargados = tablaHashTiposPokemon
         .obtenerClaves()
@@ -173,6 +251,13 @@ class PestanaAnalisisHash extends StatelessWidget {
     final int debiles = multiplicadores
         .where((double valor) => valor >= 2)
         .length;
+    final int muyDebiles = multiplicadores
+        .where((double valor) => valor >= 4)
+        .length;
+    final double sumaMultiplicadores = multiplicadores.fold<double>(
+      0,
+      (double acumulado, double valor) => acumulado + valor,
+    );
 
     final String riesgo = debiles >= 2
         ? 'Alto'
@@ -186,6 +271,8 @@ class PestanaAnalisisHash extends StatelessWidget {
       inmunes: inmunes,
       resistentes: resistentes,
       debiles: debiles,
+      muyDebiles: muyDebiles,
+      sumaMultiplicadores: sumaMultiplicadores,
       riesgo: riesgo,
     );
   }
@@ -227,7 +314,16 @@ class PestanaAnalisisHash extends StatelessWidget {
   DataRow _construirFilaTabla(_FilaMatrizDefensiva fila) {
     return DataRow(
       cells: [
-        DataCell(Text(_nombreTipoMostrado(fila.tipoAtacante))),
+        DataCell(
+          ChipTipoPokemon(
+            idTipo: _obtenerIdTipo(fila.tipoAtacante),
+            nombre: _nombreTipoMostrado(fila.tipoAtacante),
+            compacto: true,
+            modoBadge: true,
+            anchoBadge: 72,
+            altoBadge: 24,
+          ),
+        ),
         ...fila.multiplicadores.map(
           (double valor) => DataCell(
             _ChipMultiplicador(
@@ -347,6 +443,57 @@ class PestanaAnalisisHash extends StatelessWidget {
     return _capitalizar(tipoNormalizado);
   }
 
+  int? _obtenerIdTipo(String tipoInterno) {
+    final String tipoNormalizado = _normalizar(tipoInterno);
+    final RelacionesDanioTipo? relaciones = tablaHashTiposPokemon.buscarTipo(
+      tipoNormalizado,
+    );
+    return relaciones?.idTipo;
+  }
+
+  bool _hayAmenazaCritica(_FilaMatrizDefensiva? tipoMasPeligroso) {
+    if (tipoMasPeligroso == null) {
+      return false;
+    }
+
+    return tipoMasPeligroso.debiles >= 2 || tipoMasPeligroso.muyDebiles > 0;
+  }
+
+  String _generarDiagnostico({
+    required _FilaMatrizDefensiva? tipoMasPeligroso,
+    required String? tipoMasPeligrosoMostrado,
+  }) {
+    if (tipoMasPeligroso == null || tipoMasPeligrosoMostrado == null) {
+      return 'No hay una amenaza crítica. El equipo tiene cobertura defensiva aceptable.';
+    }
+
+    if (tipoMasPeligroso.debiles >= 2) {
+      if (tipoMasPeligroso.muyDebiles > 0) {
+        return 'Tu equipo tiene mayor riesgo frente a $tipoMasPeligrosoMostrado. '
+            'Hay varios Pokémon que reciben daño x2 o más, incluyendo casos x4.';
+      }
+
+      return 'Tu equipo tiene mayor riesgo frente a $tipoMasPeligrosoMostrado. '
+          'Hay varios Pokémon que reciben daño x2 o más.';
+    }
+
+    if (tipoMasPeligroso.debiles == 1) {
+      return 'Tu equipo está relativamente equilibrado. La principal amenaza es '
+          '$tipoMasPeligrosoMostrado, con una sola debilidad relevante.';
+    }
+
+    return 'No hay una amenaza crítica. El equipo tiene cobertura defensiva aceptable.';
+  }
+
+  List<String> _generarRecomendaciones(_FilaMatrizDefensiva? tipoMasPeligroso) {
+    if (!_hayAmenazaCritica(tipoMasPeligroso)) {
+      return <String>[];
+    }
+
+    final String tipo = tipoMasPeligroso!.tipoAtacante;
+    return _recomendacionesDefensivasPorAmenaza[tipo] ?? <String>[];
+  }
+
   String _normalizar(String valor) {
     return valor.trim().toLowerCase();
   }
@@ -363,6 +510,8 @@ class _FilaMatrizDefensiva {
     required this.inmunes,
     required this.resistentes,
     required this.debiles,
+    required this.muyDebiles,
+    required this.sumaMultiplicadores,
     required this.riesgo,
   });
 
@@ -371,7 +520,189 @@ class _FilaMatrizDefensiva {
   final int inmunes;
   final int resistentes;
   final int debiles;
+  final int muyDebiles;
+  final double sumaMultiplicadores;
   final String riesgo;
+}
+
+class _TarjetaTopRiesgos extends StatelessWidget {
+  const _TarjetaTopRiesgos({
+    required this.filasTopRiesgo,
+    required this.resolverNombreTipo,
+    required this.resolverIdTipo,
+  });
+
+  final List<_FilaMatrizDefensiva> filasTopRiesgo;
+  final String Function(String tipoInterno) resolverNombreTipo;
+  final int? Function(String tipoInterno) resolverIdTipo;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Top 3 tipos más peligrosos',
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            ...filasTopRiesgo.map((_FilaMatrizDefensiva fila) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.blueGrey.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ChipTipoPokemon(
+                        idTipo: resolverIdTipo(fila.tipoAtacante),
+                        nombre: resolverNombreTipo(fila.tipoAtacante),
+                        modoBadge: true,
+                        compacto: true,
+                        anchoBadge: 72,
+                        altoBadge: 24,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Wrap(
+                          spacing: 10,
+                          runSpacing: 6,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Text('Débiles: ${fila.debiles}'),
+                            Text('Muy débiles: ${fila.muyDebiles}'),
+                            _EtiquetaRiesgoCompacta(riesgo: fila.riesgo),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TarjetaDiagnostico extends StatelessWidget {
+  const _TarjetaDiagnostico({required this.texto});
+
+  final String texto;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Diagnóstico',
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            Text(texto),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TarjetaRecomendaciones extends StatelessWidget {
+  const _TarjetaRecomendaciones({
+    required this.recomendaciones,
+    required this.hayAmenazaCritica,
+    required this.resolverNombreTipo,
+    required this.resolverIdTipo,
+  });
+
+  final List<String> recomendaciones;
+  final bool hayAmenazaCritica;
+  final String Function(String tipoInterno) resolverNombreTipo;
+  final int? Function(String tipoInterno) resolverIdTipo;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Recomendaciones defensivas',
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            if (!hayAmenazaCritica)
+              const Text(
+                'No hay una amenaza crítica. El equipo tiene cobertura defensiva aceptable.',
+              )
+            else
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: recomendaciones
+                    .take(3)
+                    .map(
+                      (String tipo) => ChipTipoPokemon(
+                        idTipo: resolverIdTipo(tipo),
+                        nombre: resolverNombreTipo(tipo),
+                        modoBadge: true,
+                        anchoBadge: 82,
+                        altoBadge: 26,
+                      ),
+                    )
+                    .toList(),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EtiquetaRiesgoCompacta extends StatelessWidget {
+  const _EtiquetaRiesgoCompacta({required this.riesgo});
+
+  final String riesgo;
+
+  @override
+  Widget build(BuildContext context) {
+    final Color color = switch (riesgo) {
+      'Alto' => Colors.red.shade700,
+      'Medio' => Colors.orange.shade700,
+      _ => Colors.green.shade700,
+    };
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        riesgo,
+        style: TextStyle(
+          fontWeight: FontWeight.w700,
+          color: color,
+          fontSize: 12,
+        ),
+      ),
+    );
+  }
 }
 
 class _ResumenAnalisisBasico extends StatelessWidget {
