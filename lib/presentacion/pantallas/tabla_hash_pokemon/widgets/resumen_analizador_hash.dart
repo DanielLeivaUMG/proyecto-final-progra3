@@ -32,9 +32,16 @@ class ResumenAnalizadorHash extends StatelessWidget {
               runSpacing: 8,
               children: [
                 Chip(label: Text('Equipo: $cantidadEquipo/6')),
-                Chip(label: Text('Tipos en hash: $cantidadTipos')),
+                if (estadoEquipo == 'Lleno')
+                  const Chip(label: Text('Estado: Completo'))
+                else
+                  Chip(label: Text('Estado: $estadoEquipo')),
                 Chip(
-                  label: Text('Estado: $estadoEquipo'),
+                  label: Text(
+                    cantidadEquipo < 6
+                        ? 'Faltan: ${6 - cantidadEquipo}'
+                        : 'Listo para guardar',
+                  ),
                   backgroundColor: colorEstado.withValues(alpha: 0.16),
                 ),
               ],

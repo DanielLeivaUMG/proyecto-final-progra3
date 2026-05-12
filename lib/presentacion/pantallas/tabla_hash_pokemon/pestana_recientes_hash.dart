@@ -6,7 +6,6 @@ class PestanaRecientesHash extends StatelessWidget {
     super.key,
     required this.equiposRecientes,
     required this.cargandoOperacion,
-    required this.onGuardarEquipoActual,
     required this.onCargarEquipo,
     required this.onEliminarEquipo,
     required this.onLimpiarRecientes,
@@ -14,7 +13,6 @@ class PestanaRecientesHash extends StatelessWidget {
 
   final List<EquipoGuardadoPokemon> equiposRecientes;
   final bool cargandoOperacion;
-  final VoidCallback onGuardarEquipoActual;
   final ValueChanged<String> onCargarEquipo;
   final ValueChanged<String> onEliminarEquipo;
   final VoidCallback onLimpiarRecientes;
@@ -40,26 +38,16 @@ class PestanaRecientesHash extends StatelessWidget {
                     'Solo puedes guardar equipos completos de 6 Pokémon.',
                     style: TextStyle(fontSize: 13, color: Colors.black54),
                   ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Guarda el equipo desde la pestaña Equipo.',
+                    style: TextStyle(fontSize: 13, color: Colors.black54),
+                  ),
                   const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      FilledButton.icon(
-                        onPressed: cargandoOperacion
-                            ? null
-                            : onGuardarEquipoActual,
-                        icon: const Icon(Icons.save_alt_rounded),
-                        label: const Text('Guardar equipo actual'),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed: cargandoOperacion
-                            ? null
-                            : onLimpiarRecientes,
-                        icon: const Icon(Icons.delete_sweep_rounded),
-                        label: const Text('Limpiar recientes'),
-                      ),
-                    ],
+                  OutlinedButton.icon(
+                    onPressed: cargandoOperacion ? null : onLimpiarRecientes,
+                    icon: const Icon(Icons.delete_sweep_rounded),
+                    label: const Text('Limpiar recientes'),
                   ),
                 ],
               ),
