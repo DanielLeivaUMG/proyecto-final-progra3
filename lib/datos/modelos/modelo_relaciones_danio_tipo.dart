@@ -1,0 +1,53 @@
+import 'package:proyecto_final_progra3/dominio/entidades/relaciones_danio_tipo.dart';
+
+class ModeloRelacionesDanioTipo {
+  const ModeloRelacionesDanioTipo({
+    required this.tipo,
+    required this.sinDanioDe,
+    required this.medioDanioDe,
+    required this.dobleDanioDe,
+  });
+
+  final String tipo;
+  final List<String> sinDanioDe;
+  final List<String> medioDanioDe;
+  final List<String> dobleDanioDe;
+
+  factory ModeloRelacionesDanioTipo.fromJson(Map<String, dynamic> json) {
+    final String tipo = (json['name'] as String? ?? '').toLowerCase();
+    final Map<String, dynamic> relaciones =
+        json['damage_relations'] as Map<String, dynamic>? ??
+        <String, dynamic>{};
+
+    return ModeloRelacionesDanioTipo(
+      tipo: tipo,
+      sinDanioDe: _extraerNombres(relaciones['no_damage_from']),
+      medioDanioDe: _extraerNombres(relaciones['half_damage_from']),
+      dobleDanioDe: _extraerNombres(relaciones['double_damage_from']),
+    );
+  }
+
+  RelacionesDanioTipo aEntidad() {
+    return RelacionesDanioTipo(
+      tipo: tipo,
+      sinDanioDe: sinDanioDe,
+      medioDanioDe: medioDanioDe,
+      dobleDanioDe: dobleDanioDe,
+    );
+  }
+
+  static List<String> _extraerNombres(dynamic tiposJson) {
+    if (tiposJson is! List<dynamic>) {
+      return <String>[];
+    }
+
+    return tiposJson
+        .whereType<Map<String, dynamic>>()
+        .map(
+          (Map<String, dynamic> item) =>
+              (item['name'] as String? ?? '').toLowerCase(),
+        )
+        .where((String tipo) => tipo.isNotEmpty)
+        .toList();
+  }
+}
