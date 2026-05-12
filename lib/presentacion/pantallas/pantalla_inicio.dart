@@ -60,7 +60,7 @@ class PantallaInicio extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'Organiza tu colección, explora Pokémon reales y consulta tu progreso en segundos.',
+                      'Organiza tu colección, explora módulos y consulta tu progreso en segundos.',
                       style: TextStyle(fontSize: 15),
                     ),
                   ],
@@ -68,22 +68,6 @@ class PantallaInicio extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            _TarjetaAcceso(
-              icono: Icons.travel_explore_rounded,
-              titulo: 'Explorar Pokémon',
-              descripcion:
-                  'Descubre Pokémon y revisa información básica para empezar tu colección.',
-              textoBoton: 'Explorar ahora',
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const PantallaListaPokemon(),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 12),
             _TarjetaAcceso(
               icono: Icons.history_edu_rounded,
               titulo: 'Historial de exploración',
@@ -100,16 +84,16 @@ class PantallaInicio extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             _TarjetaAcceso(
-              icono: Icons.manage_search_rounded,
-              titulo: 'Búsqueda rápida',
+              icono: Icons.format_list_bulleted_rounded,
+              titulo: 'Lista Pokémon',
               descripcion:
-                  'Busca rápidamente un Pokémon y accede a su información.',
-              textoBoton: 'Buscar Pokémon',
+                  'Consulta la lista de Pokémon cargados desde PokéAPI.',
+              textoBoton: 'Abrir lista',
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const PantallaTablaHashPokemon(),
+                    builder: (context) => const PantallaListaPokemon(),
                   ),
                 );
               },
@@ -117,10 +101,10 @@ class PantallaInicio extends StatelessWidget {
             const SizedBox(height: 12),
             _TarjetaAcceso(
               icono: Icons.account_tree_rounded,
-              titulo: 'Arbol de Pokemon',
+              titulo: 'Árbol evolutivo',
               descripcion:
-                  'Visualiza Pokemon en estructura de arbol y realiza busqueda por nombre.',
-              textoBoton: 'Abrir arbol',
+                  'Explora familias evolutivas, busca especies y analiza sus evoluciones.',
+              textoBoton: 'Abrir árbol',
               onPressed: () {
                 Navigator.push(
                   context,
@@ -130,32 +114,21 @@ class PantallaInicio extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(height: 16),
-            Card(
-              child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: ColoresApp.acento.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(10),
+            const SizedBox(height: 12),
+            _TarjetaAcceso(
+              icono: Icons.groups_rounded,
+              titulo: 'Analizador de equipos',
+              descripcion:
+                  'Arma un equipo Pokémon de hasta 6 integrantes y analiza sus debilidades por tipo.',
+              textoBoton: 'Abrir analizador',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PantallaTablaHashPokemon(),
                   ),
-                  child: const Icon(
-                    Icons.auto_awesome_rounded,
-                    color: Color(0xFF8A5D00),
-                  ),
-                ),
-                title: const Text(
-                  'Próximamente',
-                  style: TextStyle(fontWeight: FontWeight.w700),
-                ),
-                subtitle: const Text(
-                  'Favoritos, árbol evolutivo y análisis de equipo.',
-                ),
-              ),
+                );
+              },
             ),
             const SizedBox(height: 8),
           ],
