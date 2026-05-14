@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:proyecto_final_progra3/nucleo/tema/colores_app.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/arbol_pokemon/pantalla_arbol_pokemon.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/pantalla_lista_pokemon.dart';
+import 'package:proyecto_final_progra3/presentacion/pantallas/pantalla_pila.dart';
+import 'package:proyecto_final_progra3/presentacion/pantallas/pantalla_cola.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/pantalla_pila_pokemon.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/tabla_hash_pokemon/pantalla_tabla_hash_pokemon.dart';
 
@@ -67,7 +69,9 @@ class PantallaInicio extends StatelessWidget {
                 ),
               ),
             ),
+
             const SizedBox(height: 16),
+
             _TarjetaAcceso(
               icono: Icons.history_edu_rounded,
               titulo: 'Historial de exploración',
@@ -82,7 +86,41 @@ class PantallaInicio extends StatelessWidget {
                 );
               },
             ),
+
             const SizedBox(height: 12),
+
+            _TarjetaAcceso(
+              icono: Icons.layers,
+              titulo: 'Pila (Deck de Cartas)',
+              descripcion:
+                  'Simula una pila de cartas Pokémon con comportamiento LIFO.',
+              textoBoton: 'Abrir pila visual',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const PantallaPila()),
+                );
+              },
+            ),
+
+            const SizedBox(height: 12),
+
+            _TarjetaAcceso(
+              icono: Icons.format_list_numbered,
+              titulo: 'Cola (Turnos de Batalla)',
+              descripcion:
+                  'Simula una cola de Pokémon donde el primero en entrar es el primero en atacar.',
+              textoBoton: 'Abrir cola',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const PantallaCola()),
+                );
+              },
+            ),
+
+            const SizedBox(height: 12),
+
             _TarjetaAcceso(
               icono: Icons.format_list_bulleted_rounded,
               titulo: 'Lista Pokémon',
@@ -98,7 +136,9 @@ class PantallaInicio extends StatelessWidget {
                 );
               },
             ),
+
             const SizedBox(height: 12),
+
             _TarjetaAcceso(
               icono: Icons.account_tree_rounded,
               titulo: 'Árbol evolutivo',
@@ -114,7 +154,9 @@ class PantallaInicio extends StatelessWidget {
                 );
               },
             ),
+
             const SizedBox(height: 12),
+
             _TarjetaAcceso(
               icono: Icons.groups_rounded,
               titulo: 'Analizador de equipos',
@@ -130,6 +172,7 @@ class PantallaInicio extends StatelessWidget {
                 );
               },
             ),
+
             const SizedBox(height: 8),
           ],
         ),

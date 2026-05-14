@@ -1,37 +1,60 @@
 import 'package:proyecto_final_progra3/dominio/entidades/pokemon.dart';
 
+// Pila de Pokémon (LIFO)
 class PilaPokemon {
-  final List<Pokemon> _elementos = <Pokemon>[];
+  final List<Pokemon> _elementos = [];
 
+  List<Pokemon> get elementos => List.unmodifiable(_elementos);
+
+  bool get estaVacia => _elementos.isEmpty;
+
+  int get tamanio => _elementos.length;
+
+  Pokemon? get top => estaVacia ? null : _elementos.last;
+
+  // Método original del proyecto
   void apilar(Pokemon pokemon) {
     _elementos.add(pokemon);
   }
 
+  // Método original del proyecto
   Pokemon? desapilar() {
-    if (_elementos.isEmpty) {
-      return null;
-    }
-
+    if (estaVacia) return null;
     return _elementos.removeLast();
   }
 
+  // Método original del proyecto
   Pokemon? verTope() {
-    if (_elementos.isEmpty) {
-      return null;
+    return top;
+  }
+
+  // Método original del proyecto
+  List<Pokemon> obtenerElementos() {
+    return _elementos.reversed.toList();
+  }
+
+  // Métodos nuevos para nuestra pantalla visual
+  void push(Pokemon pokemon) {
+    apilar(pokemon);
+  }
+
+  Pokemon? pop() {
+    return desapilar();
+  }
+
+  int buscarIndicePorNombre(String nombre) {
+    final listaVisual = obtenerElementos();
+
+    for (int i = 0; i < listaVisual.length; i++) {
+      if (listaVisual[i].nombre.toLowerCase() == nombre.toLowerCase()) {
+        return i;
+      }
     }
 
-    return _elementos.last;
+    return -1;
   }
 
-  bool estaVacia() {
-    return _elementos.isEmpty;
-  }
-
-  int cantidad() {
-    return _elementos.length;
-  }
-
-  List<Pokemon> obtenerElementos() {
-    return List<Pokemon>.from(_elementos.reversed);
+  void limpiar() {
+    _elementos.clear();
   }
 }

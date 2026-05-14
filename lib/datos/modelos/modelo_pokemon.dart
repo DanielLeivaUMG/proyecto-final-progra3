@@ -1,5 +1,32 @@
-import 'package:proyecto_final_progra3/dominio/entidades/pokemon.dart';
+import 'package:proyecto_final_progra3/dominio/entidades/pokemon.dart'
+    as entidad;
 
+// Modelo básico de Pokémon para pila y cola
+class Pokemon {
+  final int id;
+  final String nombre;
+  final String tipo;
+  final String imagenUrl;
+
+  const Pokemon({
+    required this.id,
+    required this.nombre,
+    required this.tipo,
+    required this.imagenUrl,
+  });
+
+  // Para crear copias modificando algún dato
+  Pokemon copyWith({int? id, String? nombre, String? tipo, String? imagenUrl}) {
+    return Pokemon(
+      id: id ?? this.id,
+      nombre: nombre ?? this.nombre,
+      tipo: tipo ?? this.tipo,
+      imagenUrl: imagenUrl ?? this.imagenUrl,
+    );
+  }
+}
+
+// Modelo usado por el servicio de la PokeAPI
 class ModeloPokemon {
   final String nombre;
   final String url;
@@ -8,22 +35,12 @@ class ModeloPokemon {
 
   factory ModeloPokemon.fromJson(Map<String, dynamic> json) {
     return ModeloPokemon(
-      nombre: (json['name'] as String? ?? '').toLowerCase(),
-      url: (json['url'] as String? ?? '').trim(),
+      nombre: json['name'] as String? ?? '',
+      url: json['url'] as String? ?? '',
     );
   }
 
-  Pokemon aEntidad() {
-    return Pokemon(nombre: nombre, url: url, id: _extraerIdDesdeUrl(url));
-  }
-
-  static int? _extraerIdDesdeUrl(String url) {
-    final RegExp patron = RegExp(r'/pokemon/(\d+)/?$', caseSensitive: false);
-    final RegExpMatch? coincidencia = patron.firstMatch(url.trim());
-    if (coincidencia == null) {
-      return null;
-    }
-
-    return int.tryParse(coincidencia.group(1) ?? '');
+  entidad.Pokemon aEntidad() {
+    return entidad.Pokemon(nombre: nombre, url: url);
   }
 }
