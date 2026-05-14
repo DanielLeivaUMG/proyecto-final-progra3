@@ -11,7 +11,10 @@ class PantallaPilaPokemon extends StatelessWidget {
     final ServicioPokeapi servicioPokeapi = ServicioPokeapi();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Pila de Pokémon'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Historial de exploración'),
+        centerTitle: true,
+      ),
       body: FutureBuilder<List<Pokemon>>(
         future: servicioPokeapi.obtenerPokemones(),
         builder: (context, snapshot) {
