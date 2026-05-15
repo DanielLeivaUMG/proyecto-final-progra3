@@ -26,6 +26,10 @@ class _PantallaColaState extends State<PantallaCola> {
       tipo: 'Normal',
       imagenUrl:
           'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/39.png',
+      hp: 115,
+      ataque: 45,
+      defensa: 20,
+      velocidad: 20,
     ),
     Pokemon(
       id: 52,
@@ -33,6 +37,10 @@ class _PantallaColaState extends State<PantallaCola> {
       tipo: 'Normal',
       imagenUrl:
           'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/52.png',
+      hp: 40,
+      ataque: 45,
+      defensa: 35,
+      velocidad: 90,
     ),
     Pokemon(
       id: 54,
@@ -40,6 +48,10 @@ class _PantallaColaState extends State<PantallaCola> {
       tipo: 'Agua',
       imagenUrl:
           'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/54.png',
+      hp: 50,
+      ataque: 52,
+      defensa: 48,
+      velocidad: 55,
     ),
     Pokemon(
       id: 143,
@@ -47,6 +59,10 @@ class _PantallaColaState extends State<PantallaCola> {
       tipo: 'Normal',
       imagenUrl:
           'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/143.png',
+      hp: 160,
+      ataque: 110,
+      defensa: 65,
+      velocidad: 30,
     ),
   ];
 
@@ -86,9 +102,19 @@ class _PantallaColaState extends State<PantallaCola> {
     final atacante = cola.frente;
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F2FF),
       appBar: AppBar(
-        title: const Text('Cola - Turnos de Batalla'),
+        backgroundColor: const Color(0xFFF8F2FF),
+        elevation: 0,
         centerTitle: true,
+        title: const Text(
+          'Cola - Turnos de Batalla',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF2B2140),
+          ),
+        ),
+        iconTheme: const IconThemeData(color: Color(0xFF2B2140)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -101,23 +127,25 @@ class _PantallaColaState extends State<PantallaCola> {
 
             const SizedBox(height: 16),
 
+            // 🔥 VISTA DE BATALLA PRO
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.red.shade50,
+                gradient: LinearGradient(
+                  colors: [Colors.red.withValues(alpha: 0.2), Colors.white],
+                ),
                 borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: Colors.red.shade200),
               ),
               child: Column(
                 children: [
                   const Text(
-                    'Vista de batalla',
+                    '⚔️ Pokémon Atacando',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 10),
                   atacante == null
-                      ? const Text('No hay Pokémon atacando')
+                      ? const Text('No hay Pokémon en batalla')
                       : TarjetaPokemon(pokemon: atacante, etiqueta: 'ATACA'),
                 ],
               ),
@@ -180,9 +208,8 @@ class _PantallaColaState extends State<PantallaCola> {
                       itemBuilder: (context, index) {
                         final pokemon = cola.elementos[index];
 
-                        return AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeOut,
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
                           child: TarjetaPokemon(
                             pokemon: pokemon,
                             resaltado: index + 1 == posicionEncontrada,

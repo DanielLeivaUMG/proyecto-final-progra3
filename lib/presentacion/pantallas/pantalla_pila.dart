@@ -25,6 +25,10 @@ class _PantallaPilaState extends State<PantallaPila> {
       tipo: 'Planta',
       imagenUrl:
           'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
+      hp: 45,
+      ataque: 49,
+      defensa: 49,
+      velocidad: 45,
     ),
     modelo.Pokemon(
       id: 4,
@@ -32,6 +36,10 @@ class _PantallaPilaState extends State<PantallaPila> {
       tipo: 'Fuego',
       imagenUrl:
           'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png',
+      hp: 39,
+      ataque: 52,
+      defensa: 43,
+      velocidad: 65,
     ),
     modelo.Pokemon(
       id: 7,
@@ -39,6 +47,10 @@ class _PantallaPilaState extends State<PantallaPila> {
       tipo: 'Agua',
       imagenUrl:
           'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png',
+      hp: 44,
+      ataque: 48,
+      defensa: 65,
+      velocidad: 43,
     ),
     modelo.Pokemon(
       id: 25,
@@ -46,6 +58,10 @@ class _PantallaPilaState extends State<PantallaPila> {
       tipo: 'Eléctrico',
       imagenUrl:
           'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png',
+      hp: 35,
+      ataque: 55,
+      defensa: 40,
+      velocidad: 90,
     ),
   ];
 
@@ -87,7 +103,7 @@ class _PantallaPilaState extends State<PantallaPila> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F2FF),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFFF8F2FF),
         elevation: 0,
         centerTitle: true,
         title: const Text(
@@ -103,12 +119,12 @@ class _PantallaPilaState extends State<PantallaPila> {
         children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(22, 10, 22, 24),
+            padding: const EdgeInsets.fromLTRB(22, 18, 22, 26),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.deepPurple.withValues(alpha: 0.18),
-                  Colors.white.withValues(alpha: 0.1),
+                  Colors.deepPurple.withValues(alpha: 0.22),
+                  Colors.white.withValues(alpha: 0.05),
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -118,14 +134,14 @@ class _PantallaPilaState extends State<PantallaPila> {
               children: [
                 const Icon(
                   Icons.catching_pokemon,
-                  size: 54,
+                  size: 58,
                   color: Colors.deepPurple,
                 ),
                 const SizedBox(height: 8),
                 const Text(
                   'Deck de Cartas Pokémon',
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 30,
                     fontWeight: FontWeight.w900,
                     color: Color(0xFF2B2140),
                   ),
@@ -136,17 +152,17 @@ class _PantallaPilaState extends State<PantallaPila> {
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 15),
                 ),
-                const SizedBox(height: 18),
+                const SizedBox(height: 20),
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(22),
+                    borderRadius: BorderRadius.circular(26),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.08),
-                        blurRadius: 18,
-                        offset: const Offset(0, 8),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
                       ),
                     ],
                   ),
@@ -161,7 +177,7 @@ class _PantallaPilaState extends State<PantallaPila> {
                             filled: true,
                             fillColor: const Color(0xFFF7F3FF),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(18),
+                              borderRadius: BorderRadius.circular(20),
                               borderSide: BorderSide.none,
                             ),
                           ),
@@ -176,11 +192,11 @@ class _PantallaPilaState extends State<PantallaPila> {
                           backgroundColor: Colors.deepPurple,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
+                            horizontal: 22,
                             vertical: 18,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                         ),
                       ),
@@ -191,7 +207,7 @@ class _PantallaPilaState extends State<PantallaPila> {
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -204,7 +220,7 @@ class _PantallaPilaState extends State<PantallaPila> {
                   backgroundColor: Colors.deepPurple,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 26,
+                    horizontal: 28,
                     vertical: 16,
                   ),
                   shape: RoundedRectangleBorder(
@@ -221,7 +237,7 @@ class _PantallaPilaState extends State<PantallaPila> {
                   backgroundColor: Colors.redAccent,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 26,
+                    horizontal: 28,
                     vertical: 16,
                   ),
                   shape: RoundedRectangleBorder(
@@ -242,7 +258,7 @@ class _PantallaPilaState extends State<PantallaPila> {
             ),
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
 
           Expanded(
             child: elementos.isEmpty
@@ -261,8 +277,8 @@ class _PantallaPilaState extends State<PantallaPila> {
                       final indiceReal = pila.elementos.indexOf(pokemon);
 
                       return TweenAnimationBuilder<double>(
-                        tween: Tween(begin: 0.85, end: 1),
-                        duration: const Duration(milliseconds: 350),
+                        tween: Tween(begin: 0.86, end: 1),
+                        duration: const Duration(milliseconds: 380),
                         curve: Curves.easeOutBack,
                         builder: (context, value, child) {
                           return Transform.scale(scale: value, child: child);
