@@ -13,25 +13,50 @@ class TarjetaPokemon extends StatelessWidget {
     this.etiqueta,
   });
 
+  Color _colorTipo(String tipo) {
+    switch (tipo.toLowerCase()) {
+      case 'fuego':
+        return Colors.deepOrange;
+      case 'agua':
+        return Colors.blue;
+      case 'planta':
+        return Colors.green;
+      case 'eléctrico':
+      case 'electrico':
+        return Colors.amber;
+      case 'normal':
+        return Colors.brown;
+      default:
+        return Colors.purple;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final Color colorTipo = _colorTipo(pokemon.tipo);
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      width: 170,
-      margin: const EdgeInsets.all(8),
-      padding: const EdgeInsets.all(12),
+      curve: Curves.easeOut,
+      width: 230,
+      margin: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: resaltado ? Colors.amber.shade100 : Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        gradient: LinearGradient(
+          colors: [colorTipo.withValues(alpha: 0.18), Colors.white],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(26),
         border: Border.all(
-          color: resaltado ? Colors.orange : Colors.grey.shade300,
-          width: resaltado ? 3 : 1,
+          color: resaltado ? Colors.orange : colorTipo.withValues(alpha: 0.45),
+          width: resaltado ? 3 : 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.12),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            color: colorTipo.withValues(alpha: 0.22),
+            blurRadius: 18,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -39,30 +64,64 @@ class TarjetaPokemon extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (etiqueta != null)
-            Text(
-              etiqueta!,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.red,
+            Align(
+              alignment: Alignment.topRight,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 5,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.redAccent,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  etiqueta!,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
 
-          Image.network(
-            pokemon.imagenUrl,
-            height: 90,
-            errorBuilder: (_, __, ___) {
-              return const Icon(Icons.catching_pokemon, size: 80);
-            },
+          Text(
+            '#${pokemon.id.toString().padLeft(3, '0')}',
+            style: TextStyle(color: colorTipo, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 8),
 
-          Text(
-            pokemon.nombre,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Image.network(
+            pokemon.imagenUrl,
+            height: 110,
+            fit: BoxFit.contain,
+            errorBuilder: (_, __, ___) {
+              return Icon(Icons.catching_pokemon, size: 90, color: colorTipo);
+            },
           ),
 
-          Text(pokemon.tipo, style: TextStyle(color: Colors.grey.shade700)),
+          const SizedBox(height: 10),
+
+          Text(
+            pokemon.nombre,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 23, fontWeight: FontWeight.w800),
+          ),
+
+          const SizedBox(height: 8),
+
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            decoration: BoxDecoration(
+              color: colorTipo.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              pokemon.tipo,
+              style: TextStyle(color: colorTipo, fontWeight: FontWeight.bold),
+            ),
+          ),
         ],
       ),
     );

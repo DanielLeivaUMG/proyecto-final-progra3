@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-//  usamos alias
 import '../../datos/modelos/modelo_pokemon.dart' as modelo;
-import '../../dominio/estructuras/pila_cartas_pokemon.dart';
+import '../../dominio/estructuras/pila_visual_pokemon.dart';
 import '../widgets/tarjeta_pokemon.dart';
 
 class PantallaPila extends StatefulWidget {
@@ -13,8 +12,7 @@ class PantallaPila extends StatefulWidget {
 }
 
 class _PantallaPilaState extends State<PantallaPila> {
-  final PilaCartasPokemon pila = PilaCartasPokemon();
-
+  final PilaVisualPokemon pila = PilaVisualPokemon();
   final TextEditingController buscarController = TextEditingController();
 
   int indiceResaltado = -1;
@@ -87,80 +85,200 @@ class _PantallaPilaState extends State<PantallaPila> {
     final elementos = pila.elementos.reversed.toList();
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F2FF),
       appBar: AppBar(
-        title: const Text('Pila - Deck Pokémon'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         centerTitle: true,
+        title: const Text(
+          'Pila - Deck Pokémon',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF2B2140),
+          ),
+        ),
+        iconTheme: const IconThemeData(color: Color(0xFF2B2140)),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            const Text(
-              'LIFO: el último Pokémon agregado queda arriba y sale primero.',
-              textAlign: TextAlign.center,
+      body: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(22, 10, 22, 24),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.deepPurple.withValues(alpha: 0.18),
+                  Colors.white.withValues(alpha: 0.1),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
             ),
-
-            const SizedBox(height: 16),
-
-            Row(
+            child: Column(
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: buscarController,
-                    decoration: const InputDecoration(
-                      labelText: 'Buscar Pokémon',
-                      border: OutlineInputBorder(),
-                    ),
+                const Icon(
+                  Icons.catching_pokemon,
+                  size: 54,
+                  color: Colors.deepPurple,
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Deck de Cartas Pokémon',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF2B2140),
                   ),
                 ),
-                const SizedBox(width: 8),
-                ElevatedButton(onPressed: buscar, child: const Text('Buscar')),
+                const SizedBox(height: 8),
+                const Text(
+                  'LIFO: el último Pokémon agregado queda arriba y sale primero.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15),
+                ),
+                const SizedBox(height: 18),
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(22),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: buscarController,
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.search),
+                            hintText: 'Buscar Pokémon por nombre...',
+                            filled: true,
+                            fillColor: const Color(0xFFF7F3FF),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(18),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton.icon(
+                        onPressed: buscar,
+                        icon: const Icon(Icons.search),
+                        label: const Text('Buscar'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepPurple,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 18,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
+          ),
 
-            const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: insertar,
-                  icon: const Icon(Icons.add),
-                  label: const Text('Push'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton.icon(
+                onPressed: insertar,
+                icon: const Icon(Icons.add),
+                label: const Text('Push'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 26,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
                 ),
-                const SizedBox(width: 12),
-                ElevatedButton.icon(
-                  onPressed: eliminar,
-                  icon: const Icon(Icons.remove),
-                  label: const Text('Pop'),
+              ),
+              const SizedBox(width: 14),
+              ElevatedButton.icon(
+                onPressed: eliminar,
+                icon: const Icon(Icons.remove),
+                label: const Text('Pop'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 26,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
                 ),
-              ],
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            'Cartas en pila: ${pila.elementos.length}',
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.deepPurple,
             ),
+          ),
 
-            const SizedBox(height: 16),
+          const SizedBox(height: 10),
 
-            Expanded(
-              child: elementos.isEmpty
-                  ? const Center(child: Text('La pila está vacía'))
-                  : ListView.builder(
-                      itemCount: elementos.length,
-                      itemBuilder: (context, index) {
-                        final pokemon = elementos[index];
+          Expanded(
+            child: elementos.isEmpty
+                ? const Center(
+                    child: Text(
+                      'La pila está vacía.\nPresiona Push para agregar cartas.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.only(bottom: 30),
+                    itemCount: elementos.length,
+                    itemBuilder: (context, index) {
+                      final pokemon = elementos[index];
+                      final indiceReal = pila.elementos.indexOf(pokemon);
 
-                        final indiceReal = pila.elementos.indexOf(pokemon);
-
-                        return Center(
+                      return TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 0.85, end: 1),
+                        duration: const Duration(milliseconds: 350),
+                        curve: Curves.easeOutBack,
+                        builder: (context, value, child) {
+                          return Transform.scale(scale: value, child: child);
+                        },
+                        child: Center(
                           child: TarjetaPokemon(
                             pokemon: pokemon,
                             resaltado: indiceReal == indiceResaltado,
                             etiqueta: index == 0 ? 'TOP' : null,
                           ),
-                        );
-                      },
-                    ),
-            ),
-          ],
-        ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
       ),
     );
   }
