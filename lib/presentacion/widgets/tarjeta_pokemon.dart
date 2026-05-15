@@ -38,12 +38,12 @@ class TarjetaPokemon extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
+        const SizedBox(height: 4),
         Container(
-          width: 42,
-          height: 7,
+          width: 36,
+          height: 6,
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.18),
             borderRadius: BorderRadius.circular(20),
@@ -63,7 +63,7 @@ class TarjetaPokemon extends StatelessWidget {
         Text(
           '$value',
           style: TextStyle(
-            fontSize: 10,
+            fontSize: 9,
             color: color,
             fontWeight: FontWeight.bold,
           ),
@@ -79,25 +79,25 @@ class TarjetaPokemon extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOut,
-      width: 260,
-      margin: const EdgeInsets.symmetric(vertical: 12),
-      padding: const EdgeInsets.all(18),
+      width: 220,
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [colorTipo.withValues(alpha: 0.28), Colors.white],
+          colors: [colorTipo.withValues(alpha: 0.25), Colors.white],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(26),
         border: Border.all(
           color: resaltado ? Colors.orange : colorTipo.withValues(alpha: 0.65),
-          width: resaltado ? 3 : 1.6,
+          width: resaltado ? 3 : 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: colorTipo.withValues(alpha: 0.26),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
+            color: colorTipo.withValues(alpha: 0.22),
+            blurRadius: 18,
+            offset: const Offset(0, 9),
           ),
         ],
       ),
@@ -114,7 +114,7 @@ class TarjetaPokemon extends StatelessWidget {
               if (etiqueta != null)
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
+                    horizontal: 10,
                     vertical: 5,
                   ),
                   decoration: BoxDecoration(
@@ -126,39 +126,34 @@ class TarjetaPokemon extends StatelessWidget {
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
+                      fontSize: 12,
                     ),
                   ),
                 ),
             ],
           ),
-
           const SizedBox(height: 8),
-
           Image.network(
             pokemon.imagenUrl,
-            height: 105,
+            height: 85,
             fit: BoxFit.contain,
             errorBuilder: (_, __, ___) {
-              return Icon(Icons.catching_pokemon, size: 85, color: colorTipo);
+              return Icon(Icons.catching_pokemon, size: 70, color: colorTipo);
             },
           ),
-
-          const SizedBox(height: 10),
-
+          const SizedBox(height: 8),
           Text(
             pokemon.nombre,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: 24,
+              fontSize: 21,
               fontWeight: FontWeight.w900,
               color: Color(0xFF1F1A2E),
             ),
           ),
-
-          const SizedBox(height: 8),
-
+          const SizedBox(height: 7),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
             decoration: BoxDecoration(
               color: colorTipo.withValues(alpha: 0.16),
               borderRadius: BorderRadius.circular(20),
@@ -168,14 +163,12 @@ class TarjetaPokemon extends StatelessWidget {
               style: TextStyle(color: colorTipo, fontWeight: FontWeight.bold),
             ),
           ),
-
-          const SizedBox(height: 14),
-
+          const SizedBox(height: 12),
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.72),
-              borderRadius: BorderRadius.circular(18),
+              color: Colors.white.withValues(alpha: 0.75),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -187,12 +180,10 @@ class TarjetaPokemon extends StatelessWidget {
               ],
             ),
           ),
-
-          const SizedBox(height: 12),
-
+          const SizedBox(height: 10),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: 7),
             decoration: BoxDecoration(
               color: colorTipo.withValues(alpha: 0.14),
               borderRadius: BorderRadius.circular(18),

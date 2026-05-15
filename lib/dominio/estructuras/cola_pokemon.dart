@@ -10,18 +10,25 @@ class ColaPokemon {
 
   Pokemon? get frente => estaVacia ? null : _cola.first;
 
-  // Enqueue: agregar al final
   void enqueue(Pokemon pokemon) {
     _cola.add(pokemon);
   }
 
-  // Dequeue: quitar el primero (ataca)
   Pokemon? dequeue() {
     if (estaVacia) return null;
     return _cola.removeAt(0);
   }
 
-  // Buscar posición en la fila
+  // El primero ataca y luego pasa al final
+  Pokemon? atacarYRotar() {
+    if (estaVacia) return null;
+
+    final Pokemon atacante = _cola.removeAt(0);
+    _cola.add(atacante);
+
+    return atacante;
+  }
+
   int buscarPosicion(String nombre) {
     for (int i = 0; i < _cola.length; i++) {
       if (_cola[i].nombre.toLowerCase() == nombre.toLowerCase()) {
