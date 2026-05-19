@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:proyecto_final_progra3/dominio/entidades/pokemon_carta.dart';
 import 'package:proyecto_final_progra3/dominio/estructuras/cola_pokemon.dart';
+import 'package:proyecto_final_progra3/nucleo/tema/colores_app.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/pila_cola/widgets/tarjeta_pokemon.dart';
 
 class PantallaColaPokemon extends StatefulWidget {
@@ -176,20 +177,8 @@ class _PantallaColaPokemonState extends State<PantallaColaPokemon>
     final double porcentajeVida = vidaEnemigo / vidaMaximaEnemigo;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F2FF),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF8F2FF),
-        elevation: 0,
-        centerTitle: true,
-        title: const Text(
-          'Cola - Battle System',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF2B2140),
-          ),
-        ),
-        iconTheme: const IconThemeData(color: Color(0xFF2B2140)),
-      ),
+      backgroundColor: ColoresApp.fondo,
+      appBar: AppBar(title: const Text('Vista de Batalla')),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -200,22 +189,26 @@ class _PantallaColaPokemonState extends State<PantallaColaPokemon>
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Colors.red.withValues(alpha: 0.18), Colors.white],
+                    colors: [
+                      ColoresApp.secundario.withValues(alpha: 0.14),
+                      ColoresApp.fondo,
+                    ],
                   ),
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Column(
                   children: [
                     const Text(
-                      '⚔️ Vista de Batalla FIFO',
+                      'Vista de Batalla',
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
+                        color: ColoresApp.textoPrincipal,
                       ),
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'El primero ataca y pasa al final.',
+                      'Organiza el orden de ataque de tus Pokémon.',
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
@@ -256,7 +249,7 @@ class _PantallaColaPokemonState extends State<PantallaColaPokemon>
                                         vertical: 7,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: Colors.redAccent,
+                                        color: ColoresApp.secundario,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
@@ -278,8 +271,9 @@ class _PantallaColaPokemonState extends State<PantallaColaPokemon>
                       icon: const Icon(Icons.flash_on),
                       label: const Text('Atacar'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
+                        backgroundColor: ColoresApp.secundario,
                         foregroundColor: Colors.white,
+                        minimumSize: const Size(0, 52),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 26,
                           vertical: 14,
@@ -304,7 +298,7 @@ class _PantallaColaPokemonState extends State<PantallaColaPokemon>
                       decoration: InputDecoration(
                         hintText: 'Buscar Pokémon...',
                         filled: true,
-                        fillColor: Colors.white,
+                        fillColor: ColoresApp.tarjeta,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(18),
                           borderSide: BorderSide.none,
@@ -315,6 +309,9 @@ class _PantallaColaPokemonState extends State<PantallaColaPokemon>
                   const SizedBox(width: 8),
                   ElevatedButton(
                     onPressed: buscar,
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(0, 52),
+                    ),
                     child: const Text('Buscar'),
                   ),
                 ],
@@ -327,12 +324,19 @@ class _PantallaColaPokemonState extends State<PantallaColaPokemon>
                     onPressed: insertar,
                     icon: const Icon(Icons.add),
                     label: const Text('Enviar a batalla'),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(0, 52),
+                    ),
                   ),
                   const SizedBox(width: 12),
                   ElevatedButton.icon(
                     onPressed: eliminar,
                     icon: const Icon(Icons.remove),
                     label: const Text('Retirar'),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(0, 52),
+                      backgroundColor: ColoresApp.secundario,
+                    ),
                   ),
                 ],
               ),
@@ -384,12 +388,12 @@ class _BarraVidaEnemigo extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColoresApp.tarjeta,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         children: [
-          const Icon(Icons.shield, color: Colors.redAccent),
+          const Icon(Icons.shield, color: ColoresApp.secundario),
           const SizedBox(width: 10),
           Expanded(
             child: ClipRRect(
@@ -401,9 +405,11 @@ class _BarraVidaEnemigo extends StatelessWidget {
                   return LinearProgressIndicator(
                     value: value,
                     minHeight: 14,
-                    backgroundColor: Colors.red.shade100,
+                    backgroundColor: ColoresApp.secundario.withValues(
+                      alpha: 0.16,
+                    ),
                     valueColor: const AlwaysStoppedAnimation<Color>(
-                      Colors.redAccent,
+                      ColoresApp.secundario,
                     ),
                   );
                 },
@@ -437,12 +443,14 @@ class _TarjetaBatallaPokemon extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.redAccent.withValues(alpha: 0.18),
+            color: ColoresApp.secundario.withValues(alpha: 0.18),
             blurRadius: 22,
             offset: const Offset(0, 10),
           ),
         ],
-        border: Border.all(color: Colors.redAccent.withValues(alpha: 0.35)),
+        border: Border.all(
+          color: ColoresApp.secundario.withValues(alpha: 0.35),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -451,7 +459,7 @@ class _TarjetaBatallaPokemon extends StatelessWidget {
             alignment: Alignment.topRight,
             child: Chip(
               label: Text('ATACA', style: TextStyle(color: Colors.white)),
-              backgroundColor: Colors.redAccent,
+              backgroundColor: ColoresApp.secundario,
             ),
           ),
           Image.network(pokemon.imagenUrl, height: 90, fit: BoxFit.contain),
