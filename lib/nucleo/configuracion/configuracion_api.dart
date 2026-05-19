@@ -13,21 +13,21 @@ class ConfiguracionApi {
     if (urlBase.trim().isEmpty) {
       throw StateError(
         'Falta configurar API_URL_BASE. Ejecuta la app con '
-        '--dart-define-from-file=entornos/dev.json',
+        '--dart-define-from-file=.env',
       );
     }
 
     if (urlBaseSprites.trim().isEmpty) {
       throw StateError(
         'Falta configurar POKEAPI_SPRITES_URL_BASE. Ejecuta la app con '
-        '--dart-define-from-file=entornos/dev.json',
+        '--dart-define-from-file=.env',
       );
     }
 
     if (urlBaseIconosTipos.trim().isEmpty) {
       throw StateError(
         'Falta configurar POKEAPI_TYPE_ICONS_URL_BASE. Ejecuta la app con '
-        '--dart-define-from-file=entornos/dev.json',
+        '--dart-define-from-file=.env',
       );
     }
   }
