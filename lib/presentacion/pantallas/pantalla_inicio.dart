@@ -71,10 +71,9 @@ class PantallaInicio extends StatelessWidget {
             const SizedBox(height: 16),
             _TarjetaAcceso(
               icono: Icons.layers,
-              titulo: 'Pila (Deck de Cartas)',
-              descripcion:
-                  'Simula una pila de cartas Pokemon con comportamiento LIFO.',
-              textoBoton: 'Abrir pila',
+              titulo: 'Cartas Pokémon',
+              descripcion: 'Organiza Pokémon como cartas dentro de una pila.',
+              textoBoton: 'Abrir cartas',
               onPressed: () {
                 Navigator.push(
                   context,
@@ -87,10 +86,9 @@ class PantallaInicio extends StatelessWidget {
             const SizedBox(height: 12),
             _TarjetaAcceso(
               icono: Icons.format_list_numbered,
-              titulo: 'Cola (Turnos de Batalla)',
-              descripcion:
-                  'Simula una cola de Pokemon donde el primero en entrar es el primero en atacar.',
-              textoBoton: 'Abrir cola',
+              titulo: 'Vista de Batalla',
+              descripcion: 'Organiza el orden de ataque de los Pokémon.',
+              textoBoton: 'Abrir batalla',
               onPressed: () {
                 Navigator.push(
                   context,

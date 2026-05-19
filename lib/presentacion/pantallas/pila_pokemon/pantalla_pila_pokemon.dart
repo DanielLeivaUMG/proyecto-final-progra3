@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_final_progra3/dominio/entidades/pokemon_carta.dart';
 import 'package:proyecto_final_progra3/dominio/estructuras/pila_visual_pokemon.dart';
+import 'package:proyecto_final_progra3/nucleo/tema/colores_app.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/pila_cola/widgets/tarjeta_pokemon.dart';
 
 class PantallaPilaPokemon extends StatefulWidget {
@@ -100,20 +101,8 @@ class _PantallaPilaPokemonState extends State<PantallaPilaPokemon> {
     final List<PokemonCarta> elementos = pila.elementos.reversed.toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F2FF),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF8F2FF),
-        elevation: 0,
-        centerTitle: true,
-        title: const Text(
-          'Pila - Deck Pokémon',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF2B2140),
-          ),
-        ),
-        iconTheme: const IconThemeData(color: Color(0xFF2B2140)),
-      ),
+      backgroundColor: ColoresApp.fondo,
+      appBar: AppBar(title: const Text('Cartas Pokémon')),
       body: Column(
         children: [
           Container(
@@ -122,8 +111,8 @@ class _PantallaPilaPokemonState extends State<PantallaPilaPokemon> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.deepPurple.withValues(alpha: 0.22),
-                  Colors.white.withValues(alpha: 0.05),
+                  ColoresApp.primario.withValues(alpha: 0.14),
+                  ColoresApp.fondo,
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -134,20 +123,20 @@ class _PantallaPilaPokemonState extends State<PantallaPilaPokemon> {
                 const Icon(
                   Icons.catching_pokemon,
                   size: 58,
-                  color: Colors.deepPurple,
+                  color: ColoresApp.primario,
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'Deck de Cartas Pokémon',
+                  'Cartas Pokémon',
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 28,
                     fontWeight: FontWeight.w900,
-                    color: Color(0xFF2B2140),
+                    color: ColoresApp.textoPrincipal,
                   ),
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'LIFO: el último Pokémon agregado queda arriba y sale primero.',
+                  'Agrega Pokémon a tu colección de cartas y retíralos cuando quieras.',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 15),
                 ),
@@ -155,7 +144,7 @@ class _PantallaPilaPokemonState extends State<PantallaPilaPokemon> {
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: ColoresApp.tarjeta,
                     borderRadius: BorderRadius.circular(26),
                     boxShadow: [
                       BoxShadow(
@@ -174,7 +163,7 @@ class _PantallaPilaPokemonState extends State<PantallaPilaPokemon> {
                             prefixIcon: const Icon(Icons.search),
                             hintText: 'Buscar Pokémon por nombre...',
                             filled: true,
-                            fillColor: const Color(0xFFF7F3FF),
+                            fillColor: ColoresApp.fondo,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
                               borderSide: BorderSide.none,
@@ -188,8 +177,9 @@ class _PantallaPilaPokemonState extends State<PantallaPilaPokemon> {
                         icon: const Icon(Icons.search),
                         label: const Text('Buscar'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepPurple,
+                          backgroundColor: ColoresApp.secundario,
                           foregroundColor: Colors.white,
+                          minimumSize: const Size(0, 52),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 22,
                             vertical: 18,
@@ -214,8 +204,9 @@ class _PantallaPilaPokemonState extends State<PantallaPilaPokemon> {
                 icon: const Icon(Icons.add),
                 label: const Text('Push'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
+                  backgroundColor: ColoresApp.primario,
                   foregroundColor: Colors.white,
+                  minimumSize: const Size(0, 52),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 28,
                     vertical: 16,
@@ -231,8 +222,9 @@ class _PantallaPilaPokemonState extends State<PantallaPilaPokemon> {
                 icon: const Icon(Icons.remove),
                 label: const Text('Pop'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
+                  backgroundColor: ColoresApp.secundario,
                   foregroundColor: Colors.white,
+                  minimumSize: const Size(0, 52),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 28,
                     vertical: 16,
@@ -249,7 +241,7 @@ class _PantallaPilaPokemonState extends State<PantallaPilaPokemon> {
             'Cartas en pila: ${pila.elementos.length}',
             style: const TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.deepPurple,
+              color: ColoresApp.primario,
             ),
           ),
           const SizedBox(height: 8),

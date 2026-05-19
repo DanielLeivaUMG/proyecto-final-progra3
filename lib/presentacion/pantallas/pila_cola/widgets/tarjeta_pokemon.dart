@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_final_progra3/dominio/entidades/pokemon_carta.dart';
+import 'package:proyecto_final_progra3/nucleo/tema/colores_app.dart';
 
 class TarjetaPokemon extends StatelessWidget {
   const TarjetaPokemon({
@@ -16,18 +17,15 @@ class TarjetaPokemon extends StatelessWidget {
   Color _colorTipo(String tipo) {
     switch (tipo.toLowerCase()) {
       case 'fuego':
-        return Colors.deepOrange;
-      case 'agua':
-        return Colors.blue;
-      case 'planta':
-        return Colors.green;
       case 'eléctrico':
       case 'electrico':
-        return Colors.amber;
-      case 'normal':
-        return Colors.brown;
+        return ColoresApp.acento;
+      case 'agua':
+        return ColoresApp.secundario;
+      case 'planta':
+        return ColoresApp.primario;
       default:
-        return Colors.deepPurple;
+        return ColoresApp.secundario;
     }
   }
 
@@ -84,18 +82,20 @@ class TarjetaPokemon extends StatelessWidget {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [colorTipo.withValues(alpha: 0.25), Colors.white],
+          colors: [colorTipo.withValues(alpha: 0.2), ColoresApp.tarjeta],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(26),
         border: Border.all(
-          color: resaltado ? Colors.orange : colorTipo.withValues(alpha: 0.65),
+          color: resaltado
+              ? ColoresApp.acento
+              : ColoresApp.secundario.withValues(alpha: 0.45),
           width: resaltado ? 3 : 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: colorTipo.withValues(alpha: 0.22),
+            color: ColoresApp.secundario.withValues(alpha: 0.14),
             blurRadius: 18,
             offset: const Offset(0, 9),
           ),
@@ -118,7 +118,7 @@ class TarjetaPokemon extends StatelessWidget {
                     vertical: 5,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.redAccent,
+                    color: ColoresApp.secundario,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -148,7 +148,7 @@ class TarjetaPokemon extends StatelessWidget {
             style: const TextStyle(
               fontSize: 21,
               fontWeight: FontWeight.w900,
-              color: Color(0xFF1F1A2E),
+              color: ColoresApp.textoPrincipal,
             ),
           ),
           const SizedBox(height: 7),
@@ -173,10 +173,10 @@ class TarjetaPokemon extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _stat('HP', pokemon.hp, Colors.red),
-                _stat('ATK', pokemon.ataque, Colors.orange),
-                _stat('DEF', pokemon.defensa, Colors.blue),
-                _stat('SPD', pokemon.velocidad, Colors.green),
+                _stat('HP', pokemon.hp, ColoresApp.secundario),
+                _stat('ATK', pokemon.ataque, ColoresApp.primario),
+                _stat('DEF', pokemon.defensa, ColoresApp.secundario),
+                _stat('SPD', pokemon.velocidad, ColoresApp.acento),
               ],
             ),
           ),
