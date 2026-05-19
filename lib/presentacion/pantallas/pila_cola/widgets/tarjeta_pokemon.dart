@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import '../../datos/modelos/modelo_pokemon.dart';
+import 'package:proyecto_final_progra3/dominio/entidades/pokemon_carta.dart';
 
 class TarjetaPokemon extends StatelessWidget {
-  final Pokemon pokemon;
-  final bool resaltado;
-  final String? etiqueta;
-
   const TarjetaPokemon({
     super.key,
     required this.pokemon,
     this.resaltado = false,
     this.etiqueta,
   });
+
+  final PokemonCarta pokemon;
+  final bool resaltado;
+  final String? etiqueta;
 
   Color _colorTipo(String tipo) {
     switch (tipo.toLowerCase()) {
@@ -137,7 +137,7 @@ class TarjetaPokemon extends StatelessWidget {
             pokemon.imagenUrl,
             height: 85,
             fit: BoxFit.contain,
-            errorBuilder: (_, __, ___) {
+            errorBuilder: (context, error, stackTrace) {
               return Icon(Icons.catching_pokemon, size: 70, color: colorTipo);
             },
           ),

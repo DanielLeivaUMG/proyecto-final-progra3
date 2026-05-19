@@ -1,29 +1,29 @@
-import '../../datos/modelos/modelo_pokemon.dart';
+import 'package:proyecto_final_progra3/dominio/entidades/pokemon_carta.dart';
 
 // Cola de Pokémon (FIFO)
 class ColaPokemon {
-  final List<Pokemon> _cola = [];
+  final List<PokemonCarta> _cola = [];
 
-  List<Pokemon> get elementos => List.unmodifiable(_cola);
+  List<PokemonCarta> get elementos => List.unmodifiable(_cola);
 
   bool get estaVacia => _cola.isEmpty;
 
-  Pokemon? get frente => estaVacia ? null : _cola.first;
+  PokemonCarta? get frente => estaVacia ? null : _cola.first;
 
-  void enqueue(Pokemon pokemon) {
+  void enqueue(PokemonCarta pokemon) {
     _cola.add(pokemon);
   }
 
-  Pokemon? dequeue() {
+  PokemonCarta? dequeue() {
     if (estaVacia) return null;
     return _cola.removeAt(0);
   }
 
   // El primero ataca y luego pasa al final
-  Pokemon? atacarYRotar() {
+  PokemonCarta? atacarYRotar() {
     if (estaVacia) return null;
 
-    final Pokemon atacante = _cola.removeAt(0);
+    final PokemonCarta atacante = _cola.removeAt(0);
     _cola.add(atacante);
 
     return atacante;

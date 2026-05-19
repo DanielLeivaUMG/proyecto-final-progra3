@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:proyecto_final_progra3/dominio/entidades/pokemon_carta.dart';
+import 'package:proyecto_final_progra3/dominio/estructuras/pila_visual_pokemon.dart';
+import 'package:proyecto_final_progra3/presentacion/pantallas/pila_cola/widgets/tarjeta_pokemon.dart';
 
-import '../../datos/modelos/modelo_pokemon.dart' as modelo;
-import '../../dominio/estructuras/pila_visual_pokemon.dart';
-import '../widgets/tarjeta_pokemon.dart';
-
-class PantallaPila extends StatefulWidget {
-  const PantallaPila({super.key});
+class PantallaPilaPokemon extends StatefulWidget {
+  const PantallaPilaPokemon({super.key});
 
   @override
-  State<PantallaPila> createState() => _PantallaPilaState();
+  State<PantallaPilaPokemon> createState() => _PantallaPilaPokemonState();
 }
 
-class _PantallaPilaState extends State<PantallaPila> {
+class _PantallaPilaPokemonState extends State<PantallaPilaPokemon> {
   final PilaVisualPokemon pila = PilaVisualPokemon();
   final TextEditingController buscarController = TextEditingController();
 
   int indiceResaltado = -1;
   int contador = 0;
 
-  final List<modelo.Pokemon> pokemones = const [
-    modelo.Pokemon(
+  final List<PokemonCarta> pokemones = const <PokemonCarta>[
+    PokemonCarta(
       id: 1,
       nombre: 'Bulbasaur',
       tipo: 'Planta',
@@ -30,7 +29,7 @@ class _PantallaPilaState extends State<PantallaPila> {
       defensa: 49,
       velocidad: 45,
     ),
-    modelo.Pokemon(
+    PokemonCarta(
       id: 4,
       nombre: 'Charmander',
       tipo: 'Fuego',
@@ -41,7 +40,7 @@ class _PantallaPilaState extends State<PantallaPila> {
       defensa: 43,
       velocidad: 65,
     ),
-    modelo.Pokemon(
+    PokemonCarta(
       id: 7,
       nombre: 'Squirtle',
       tipo: 'Agua',
@@ -52,7 +51,7 @@ class _PantallaPilaState extends State<PantallaPila> {
       defensa: 65,
       velocidad: 43,
     ),
-    modelo.Pokemon(
+    PokemonCarta(
       id: 25,
       nombre: 'Pikachu',
       tipo: 'Eléctrico',
@@ -66,7 +65,7 @@ class _PantallaPilaState extends State<PantallaPila> {
   ];
 
   void insertar() {
-    final pokemon = pokemones[contador % pokemones.length];
+    final PokemonCarta pokemon = pokemones[contador % pokemones.length];
 
     setState(() {
       pila.push(pokemon);
@@ -83,7 +82,7 @@ class _PantallaPilaState extends State<PantallaPila> {
   }
 
   void buscar() {
-    final nombre = buscarController.text.trim();
+    final String nombre = buscarController.text.trim();
 
     setState(() {
       indiceResaltado = pila.buscarIndicePorNombre(nombre);
@@ -98,7 +97,7 @@ class _PantallaPilaState extends State<PantallaPila> {
 
   @override
   Widget build(BuildContext context) {
-    final elementos = pila.elementos.reversed.toList();
+    final List<PokemonCarta> elementos = pila.elementos.reversed.toList();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F2FF),
@@ -206,9 +205,7 @@ class _PantallaPilaState extends State<PantallaPila> {
               ],
             ),
           ),
-
           const SizedBox(height: 14),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -247,9 +244,7 @@ class _PantallaPilaState extends State<PantallaPila> {
               ),
             ],
           ),
-
           const SizedBox(height: 10),
-
           Text(
             'Cartas en pila: ${pila.elementos.length}',
             style: const TextStyle(
@@ -257,9 +252,7 @@ class _PantallaPilaState extends State<PantallaPila> {
               color: Colors.deepPurple,
             ),
           ),
-
           const SizedBox(height: 8),
-
           Expanded(
             child: elementos.isEmpty
                 ? const Center(
@@ -272,17 +265,25 @@ class _PantallaPilaState extends State<PantallaPila> {
                 : ListView.builder(
                     padding: const EdgeInsets.only(bottom: 30),
                     itemCount: elementos.length,
-                    itemBuilder: (context, index) {
-                      final pokemon = elementos[index];
-                      final indiceReal = pila.elementos.indexOf(pokemon);
+                    itemBuilder: (BuildContext context, int index) {
+                      final PokemonCarta pokemon = elementos[index];
+                      final int indiceReal = pila.elementos.indexOf(pokemon);
 
                       return TweenAnimationBuilder<double>(
                         tween: Tween(begin: 0.86, end: 1),
                         duration: const Duration(milliseconds: 380),
                         curve: Curves.easeOutBack,
-                        builder: (context, value, child) {
-                          return Transform.scale(scale: value, child: child);
-                        },
+                        builder:
+                            (
+                              BuildContext context,
+                              double value,
+                              Widget? child,
+                            ) {
+                              return Transform.scale(
+                                scale: value,
+                                child: child,
+                              );
+                            },
                         child: Center(
                           child: TarjetaPokemon(
                             pokemon: pokemon,
