@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_final_progra3/nucleo/tema/colores_app.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/arbol_pokemon/pantalla_arbol_pokemon.dart';
+import 'package:proyecto_final_progra3/presentacion/pantallas/pantalla_cola_pokemon.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/pantalla_lista_pokemon.dart';
-import 'package:proyecto_final_progra3/presentacion/pantallas/pantalla_pila.dart';
-import 'package:proyecto_final_progra3/presentacion/pantallas/pantalla_cola.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/pantalla_pila_pokemon.dart';
 import 'package:proyecto_final_progra3/presentacion/pantallas/tabla_hash_pokemon/pantalla_tabla_hash_pokemon.dart';
 
@@ -13,7 +12,7 @@ class PantallaInicio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('PokéPlanner'), centerTitle: true),
+      appBar: AppBar(title: const Text('PokePlanner'), centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -44,7 +43,7 @@ class PantallaInicio extends StatelessWidget {
                           ),
                           SizedBox(width: 8),
                           Text(
-                            'Planifica tu colección',
+                            'Planifica tu coleccion',
                             style: TextStyle(
                               color: ColoresApp.secundario,
                               fontWeight: FontWeight.w600,
@@ -55,28 +54,27 @@ class PantallaInicio extends StatelessWidget {
                     ),
                     const SizedBox(height: 14),
                     Text(
-                      'PokéPlanner',
+                      'PokePlanner',
                       style: Theme.of(
                         context,
                       ).textTheme.headlineSmall?.copyWith(fontSize: 28),
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'Organiza tu colección, explora módulos y consulta tu progreso en segundos.',
+                      'Organiza tu coleccion, explora modulos y consulta tu progreso en segundos.',
                       style: TextStyle(fontSize: 15),
                     ),
                   ],
                 ),
               ),
             ),
-
             const SizedBox(height: 16),
-
             _TarjetaAcceso(
-              icono: Icons.history_edu_rounded,
-              titulo: 'Historial de exploración',
-              descripcion: 'Revisa los Pokémon que exploraste recientemente.',
-              textoBoton: 'Ver historial',
+              icono: Icons.layers,
+              titulo: 'Pila (Deck de Cartas)',
+              descripcion:
+                  'Simula una pila de cartas Pokemon con comportamiento LIFO.',
+              textoBoton: 'Abrir pila',
               onPressed: () {
                 Navigator.push(
                   context,
@@ -86,46 +84,28 @@ class PantallaInicio extends StatelessWidget {
                 );
               },
             ),
-
             const SizedBox(height: 12),
-
-            _TarjetaAcceso(
-              icono: Icons.layers,
-              titulo: 'Pila (Deck de Cartas)',
-              descripcion:
-                  'Simula una pila de cartas Pokémon con comportamiento LIFO.',
-              textoBoton: 'Abrir pila visual',
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const PantallaPila()),
-                );
-              },
-            ),
-
-            const SizedBox(height: 12),
-
             _TarjetaAcceso(
               icono: Icons.format_list_numbered,
               titulo: 'Cola (Turnos de Batalla)',
               descripcion:
-                  'Simula una cola de Pokémon donde el primero en entrar es el primero en atacar.',
+                  'Simula una cola de Pokemon donde el primero en entrar es el primero en atacar.',
               textoBoton: 'Abrir cola',
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const PantallaCola()),
+                  MaterialPageRoute(
+                    builder: (context) => const PantallaColaPokemon(),
+                  ),
                 );
               },
             ),
-
             const SizedBox(height: 12),
-
             _TarjetaAcceso(
               icono: Icons.format_list_bulleted_rounded,
-              titulo: 'Lista Pokémon',
+              titulo: 'Lista Pokemon',
               descripcion:
-                  'Consulta la lista de Pokémon cargados desde PokéAPI.',
+                  'Consulta la lista de Pokemon cargados desde PokeAPI.',
               textoBoton: 'Abrir lista',
               onPressed: () {
                 Navigator.push(
@@ -136,15 +116,13 @@ class PantallaInicio extends StatelessWidget {
                 );
               },
             ),
-
             const SizedBox(height: 12),
-
             _TarjetaAcceso(
               icono: Icons.account_tree_rounded,
-              titulo: 'Árbol evolutivo',
+              titulo: 'Arbol evolutivo',
               descripcion:
                   'Explora familias evolutivas, busca especies y analiza sus evoluciones.',
-              textoBoton: 'Abrir árbol',
+              textoBoton: 'Abrir arbol',
               onPressed: () {
                 Navigator.push(
                   context,
@@ -154,14 +132,12 @@ class PantallaInicio extends StatelessWidget {
                 );
               },
             ),
-
             const SizedBox(height: 12),
-
             _TarjetaAcceso(
               icono: Icons.groups_rounded,
               titulo: 'Analizador de equipos',
               descripcion:
-                  'Arma un equipo Pokémon de hasta 6 integrantes y analiza sus debilidades por tipo.',
+                  'Arma un equipo Pokemon de hasta 6 integrantes y analiza sus debilidades por tipo.',
               textoBoton: 'Abrir analizador',
               onPressed: () {
                 Navigator.push(
@@ -172,7 +148,6 @@ class PantallaInicio extends StatelessWidget {
                 );
               },
             ),
-
             const SizedBox(height: 8),
           ],
         ),

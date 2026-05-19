@@ -1,18 +1,18 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:proyecto_final_progra3/dominio/entidades/pokemon_carta.dart';
+import 'package:proyecto_final_progra3/dominio/estructuras/cola_pokemon.dart';
+import 'package:proyecto_final_progra3/presentacion/pantallas/pila_cola/widgets/tarjeta_pokemon.dart';
 
-import '../../datos/modelos/modelo_pokemon.dart';
-import '../../dominio/estructuras/cola_pokemon.dart';
-import '../widgets/tarjeta_pokemon.dart';
-
-class PantallaCola extends StatefulWidget {
-  const PantallaCola({super.key});
+class PantallaColaPokemon extends StatefulWidget {
+  const PantallaColaPokemon({super.key});
 
   @override
-  State<PantallaCola> createState() => _PantallaColaState();
+  State<PantallaColaPokemon> createState() => _PantallaColaPokemonState();
 }
 
-class _PantallaColaState extends State<PantallaCola>
+class _PantallaColaPokemonState extends State<PantallaColaPokemon>
     with SingleTickerProviderStateMixin {
   final ColaPokemon cola = ColaPokemon();
   final TextEditingController buscarController = TextEditingController();
@@ -31,8 +31,8 @@ class _PantallaColaState extends State<PantallaCola>
   String mensajeBatalla =
       'Agrega Pokémon a la cola y presiona Atacar para iniciar.';
 
-  final List<Pokemon> pokemones = const [
-    Pokemon(
+  final List<PokemonCarta> pokemones = const <PokemonCarta>[
+    PokemonCarta(
       id: 39,
       nombre: 'Jigglypuff',
       tipo: 'Normal',
@@ -43,7 +43,7 @@ class _PantallaColaState extends State<PantallaCola>
       defensa: 20,
       velocidad: 20,
     ),
-    Pokemon(
+    PokemonCarta(
       id: 52,
       nombre: 'Meowth',
       tipo: 'Normal',
@@ -54,7 +54,7 @@ class _PantallaColaState extends State<PantallaCola>
       defensa: 35,
       velocidad: 90,
     ),
-    Pokemon(
+    PokemonCarta(
       id: 54,
       nombre: 'Psyduck',
       tipo: 'Agua',
@@ -65,7 +65,7 @@ class _PantallaColaState extends State<PantallaCola>
       defensa: 48,
       velocidad: 55,
     ),
-    Pokemon(
+    PokemonCarta(
       id: 143,
       nombre: 'Snorlax',
       tipo: 'Normal',
@@ -89,7 +89,7 @@ class _PantallaColaState extends State<PantallaCola>
   }
 
   void insertar() {
-    final pokemon = pokemones[contador % pokemones.length];
+    final PokemonCarta pokemon = pokemones[contador % pokemones.length];
 
     setState(() {
       cola.enqueue(pokemon);
@@ -100,7 +100,7 @@ class _PantallaColaState extends State<PantallaCola>
   }
 
   void eliminar() {
-    final eliminado = cola.dequeue();
+    final PokemonCarta? eliminado = cola.dequeue();
 
     setState(() {
       posicionEncontrada = -1;
@@ -111,7 +111,7 @@ class _PantallaColaState extends State<PantallaCola>
   }
 
   void buscar() {
-    final nombre = buscarController.text.trim();
+    final String nombre = buscarController.text.trim();
 
     setState(() {
       posicionEncontrada = cola.buscarPosicion(nombre);
@@ -122,7 +122,7 @@ class _PantallaColaState extends State<PantallaCola>
   }
 
   Future<void> atacar() async {
-    final atacante = cola.atacarYRotar();
+    final PokemonCarta? atacante = cola.atacarYRotar();
 
     if (atacante == null) {
       setState(() {
@@ -154,7 +154,7 @@ class _PantallaColaState extends State<PantallaCola>
       }
     });
 
-    await Future.delayed(const Duration(milliseconds: 600));
+    await Future<void>.delayed(const Duration(milliseconds: 600));
 
     if (mounted) {
       setState(() {
@@ -172,7 +172,7 @@ class _PantallaColaState extends State<PantallaCola>
 
   @override
   Widget build(BuildContext context) {
-    final atacante = cola.frente;
+    final PokemonCarta? atacante = cola.frente;
     final double porcentajeVida = vidaEnemigo / vidaMaximaEnemigo;
 
     return Scaffold(
@@ -219,15 +219,12 @@ class _PantallaColaState extends State<PantallaCola>
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
-
                     _BarraVidaEnemigo(
                       vida: vidaEnemigo,
                       vidaMaxima: vidaMaximaEnemigo,
                       porcentaje: porcentajeVida,
                     ),
-
                     const SizedBox(height: 18),
-
                     atacante == null
                         ? const Padding(
                             padding: EdgeInsets.all(24),
@@ -235,7 +232,7 @@ class _PantallaColaState extends State<PantallaCola>
                           )
                         : AnimatedBuilder(
                             animation: controladorAnimacion,
-                            builder: (context, child) {
+                            builder: (BuildContext context, Widget? child) {
                               final double shake =
                                   sin(controladorAnimacion.value * pi * 8) * 7;
 
@@ -275,9 +272,7 @@ class _PantallaColaState extends State<PantallaCola>
                               ],
                             ),
                           ),
-
                     const SizedBox(height: 14),
-
                     ElevatedButton.icon(
                       onPressed: atacar,
                       icon: const Icon(Icons.flash_on),
@@ -291,9 +286,7 @@ class _PantallaColaState extends State<PantallaCola>
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 10),
-
                     Text(
                       mensajeBatalla,
                       textAlign: TextAlign.center,
@@ -302,9 +295,7 @@ class _PantallaColaState extends State<PantallaCola>
                   ],
                 ),
               ),
-
               const SizedBox(height: 16),
-
               Row(
                 children: [
                   Expanded(
@@ -328,9 +319,7 @@ class _PantallaColaState extends State<PantallaCola>
                   ),
                 ],
               ),
-
               const SizedBox(height: 14),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -347,9 +336,7 @@ class _PantallaColaState extends State<PantallaCola>
                   ),
                 ],
               ),
-
               const SizedBox(height: 14),
-
               SizedBox(
                 height: 440,
                 child: cola.elementos.isEmpty
@@ -357,8 +344,8 @@ class _PantallaColaState extends State<PantallaCola>
                     : ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: cola.elementos.length,
-                        itemBuilder: (context, index) {
-                          final pokemon = cola.elementos[index];
+                        itemBuilder: (BuildContext context, int index) {
+                          final PokemonCarta pokemon = cola.elementos[index];
 
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -382,15 +369,15 @@ class _PantallaColaState extends State<PantallaCola>
 }
 
 class _BarraVidaEnemigo extends StatelessWidget {
-  final int vida;
-  final int vidaMaxima;
-  final double porcentaje;
-
   const _BarraVidaEnemigo({
     required this.vida,
     required this.vidaMaxima,
     required this.porcentaje,
   });
+
+  final int vida;
+  final int vidaMaxima;
+  final double porcentaje;
 
   @override
   Widget build(BuildContext context) {
@@ -410,7 +397,7 @@ class _BarraVidaEnemigo extends StatelessWidget {
               child: TweenAnimationBuilder<double>(
                 tween: Tween<double>(end: porcentaje),
                 duration: const Duration(milliseconds: 500),
-                builder: (context, value, child) {
+                builder: (BuildContext context, double value, Widget? child) {
                   return LinearProgressIndicator(
                     value: value,
                     minHeight: 14,
@@ -435,9 +422,9 @@ class _BarraVidaEnemigo extends StatelessWidget {
 }
 
 class _TarjetaBatallaPokemon extends StatelessWidget {
-  final Pokemon pokemon;
-
   const _TarjetaBatallaPokemon({required this.pokemon});
+
+  final PokemonCarta pokemon;
 
   @override
   Widget build(BuildContext context) {
