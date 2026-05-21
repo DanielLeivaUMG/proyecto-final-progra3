@@ -5,6 +5,7 @@ import 'package:proyecto_final_progra3/datos/modelos/modelo_pokemon.dart';
 import 'package:proyecto_final_progra3/datos/modelos/modelo_pokemon_detalle.dart';
 import 'package:proyecto_final_progra3/datos/modelos/modelo_relaciones_danio_tipo.dart';
 import 'package:proyecto_final_progra3/dominio/entidades/pokemon.dart';
+import 'package:proyecto_final_progra3/dominio/entidades/pokemon_carta.dart';
 import 'package:proyecto_final_progra3/dominio/entidades/relaciones_danio_tipo.dart';
 import 'package:proyecto_final_progra3/dominio/estructuras/arbol_pokemon.dart';
 import 'package:proyecto_final_progra3/nucleo/configuracion/configuracion_api.dart';
@@ -42,6 +43,30 @@ class ServicioPokeapi {
     }
   }
 
+  Future<List<Pokemon>> obtenerPokemonesPaginados({
+    int limite = 20,
+    int offset = 0,
+  }) async {
+    final Uri url = Uri.parse(
+      '${obtenerUrlPokemon()}?limit=$limite&offset=$offset',
+    );
+    final http.Response respuesta = await http.get(url);
+
+    if (respuesta.statusCode == 200) {
+      final Map<String, dynamic> datos = json.decode(respuesta.body);
+      final List<dynamic> resultados = datos['results'] ?? <dynamic>[];
+
+      return resultados
+          .map(
+            (dynamic item) =>
+                ModeloPokemon.fromJson(item as Map<String, dynamic>).aEntidad(),
+          )
+          .toList();
+    } else {
+      throw Exception('Error al obtener los pokemones paginados desde la API');
+    }
+  }
+
   Future<Pokemon> obtenerPokemonDetalle(String nombreOId) async {
     final String valorBusqueda = nombreOId.trim().toLowerCase();
     if (valorBusqueda.isEmpty) {
@@ -60,6 +85,66 @@ class ServicioPokeapi {
       datos,
       urlBasePokemon: obtenerUrlPokemon(),
     ).aEntidad();
+  }
+
+  Future<PokemonCarta> obtenerPokemonCartaDetalle(String nombreOId) async {
+    final String valorBusqueda = nombreOId.trim().toLowerCase();
+
+    if (valorBusqueda.isEmpty) {
+      throw Exception('Debes ingresar un Pokemon valido.');
+    }
+
+    final Uri url = Uri.parse('${obtenerUrlPokemon()}/$valorBusqueda');
+    final http.Response respuesta = await http.get(url);
+
+    if (respuesta.statusCode != 200) {
+      throw Exception('No se pudo obtener el detalle del Pokemon solicitado.');
+    }
+
+    final Map<String, dynamic> datos =
+        json.decode(respuesta.body) as Map<String, dynamic>;
+
+    int obtenerStat(String nombreStat) {
+      final List<dynamic> stats = datos['stats'] as List<dynamic>? ?? [];
+
+      for (final dynamic item in stats) {
+        final Map<String, dynamic> statItem = item as Map<String, dynamic>;
+        final Map<String, dynamic> stat =
+            statItem['stat'] as Map<String, dynamic>? ?? <String, dynamic>{};
+
+        if (stat['name'] == nombreStat) {
+          return statItem['base_stat'] as int? ?? 50;
+        }
+      }
+
+      return 50;
+    }
+
+    final List<dynamic> tipos = datos['types'] as List<dynamic>? ?? [];
+    String tipo = 'normal';
+
+    if (tipos.isNotEmpty) {
+      final Map<String, dynamic> tipoItem = tipos.first as Map<String, dynamic>;
+      final Map<String, dynamic> tipoDatos =
+          tipoItem['type'] as Map<String, dynamic>? ?? <String, dynamic>{};
+
+      tipo = tipoDatos['name'] as String? ?? 'normal';
+    }
+
+    final int id = datos['id'] as int? ?? 0;
+    final String nombre = datos['name'] as String? ?? valorBusqueda;
+
+    return PokemonCarta(
+      id: id,
+      nombre: _capitalizar(nombre),
+      tipo: _capitalizar(tipo),
+      imagenUrl:
+          'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png',
+      hp: obtenerStat('hp'),
+      ataque: obtenerStat('attack'),
+      defensa: obtenerStat('defense'),
+      velocidad: obtenerStat('speed'),
+    );
   }
 
   Future<RelacionesDanioTipo> obtenerRelacionesDanioTipo(String tipo) async {
@@ -140,5 +225,13 @@ class ServicioPokeapi {
       pokemon: Pokemon(nombre: nombre, url: url),
       hijos: hijos,
     );
+  }
+
+  String _capitalizar(String texto) {
+    if (texto.isEmpty) {
+      return texto;
+    }
+
+    return '${texto[0].toUpperCase()}${texto.substring(1)}';
   }
 }
